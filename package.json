@@ -1,8 +1,5 @@
-/**
- * New node file
- */
 {
-  "name": "cadXML2GeoJSON",
+  "name": "example-project",
   "version": "0.1.0",
   "devDependencies": {
     "grunt": "~0.4.2"

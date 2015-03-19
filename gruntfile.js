@@ -10,9 +10,7 @@ grunt.initConfig({
 					},
 					dist : {
 						src : [ 'src/CadXML2GeoJSON.js',
-								'src/cadastre/Utils.js', 
-								'src/utils/Xml.js',
-								'src/controls/Resources.js' ],
+								'src/cadastre/EntitySpatial.js' ],
 						dest : 'dist/<%= pkg.name %>.js'
 					}
 				},
