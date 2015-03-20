@@ -28,7 +28,7 @@ grunt.initConfig({
 //					files : [ 'test/**/*.html' ]
 //				},
 				jshint : {
-					files : [ 'Gruntfile.js', 'src/**/*.js' ],
+					files : [ 'gruntfile.js', 'src/**/*.js' ],
 					options : {
 						// options here to override JSHint defaults
 						globals : {
@@ -52,7 +52,7 @@ grunt.initConfig({
 //					tasks : [ 'jshint', 'qunit' ]
 //				}
 			});
-	grunt.loadNpmTasks('grunt-jsdoc');
+//	grunt.loadNpmTasks('grunt-jsdoc');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-qunit');

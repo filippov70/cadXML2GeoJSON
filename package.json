@@ -1,7 +1,12 @@
 {
-  "name": "example-project",
+  "name": "cadXML2GeoJSON",
   "version": "0.1.0",
   "devDependencies": {
-    "grunt": "~0.4.2"
-  }
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint" : "latest",
+    "grunt-contrib-concat" : "latest",
+    "grunt-contrib-uglify" : "latest",
+    "grunt-contrib-qunit" : "latest",
+    "grunt-contrib-watch"  : "latest" 
+    }
 }

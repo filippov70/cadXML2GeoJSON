@@ -1,3 +1,5 @@
 grunt
 http://modx.ws/grunt-dlya-chajnikov
 http://sapegin.ru/pres/grunt/
+
+запуск grunt из eclipse https://paultavares.wordpress.com/2014/01/06/setup-an-eclipse-run-external-tool-configuration-for-grunt/
