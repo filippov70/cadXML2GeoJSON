@@ -1,3 +1,5 @@
+/* global module */
+
 /**
  * New node file
  */
@@ -6,9 +8,13 @@
 module.exports = cadXML2GeoJSON;
 	
 var cadXML2GeoJSON = (function() {
-	
+	var Parcels;
+	var Quartal;
+	var Zones;
+	var Bounds;
 	this.getGeoJSON = function (xmlData) {
-		
+		var json = $.xml2json(xml).CadastralBlocks;
+		//if 
 	};
 	
 	return this;

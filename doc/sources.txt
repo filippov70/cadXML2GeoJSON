@@ -1,3 +1,7 @@
+javaScript
+http://learnxinyminutes.com/docs/ru-ru/javascript-ru/
+http://learn.javascript.ru/
+
 grunt
 http://modx.ws/grunt-dlya-chajnikov
 http://sapegin.ru/pres/grunt/
