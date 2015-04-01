@@ -2,7 +2,7 @@
 Библиотека-конвертер XML Росреестра (кадастр недвижимости) в GeoJSON
 
 
-Copyright & license
+# Copyright & license
 
 The MIT License (MIT)
 
