@@ -1,9 +1,17 @@
 javaScript
 http://learnxinyminutes.com/docs/ru-ru/javascript-ru/
 http://learn.javascript.ru/
+http://karmazzin.gitbooks.io/eloquentjavascript_ru/
 
 grunt
 http://modx.ws/grunt-dlya-chajnikov
 http://sapegin.ru/pres/grunt/
-
+vexell.ru/2014/05/%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0-backbone-requirejs-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0-%D1%81-%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E-grunt/
 запуск grunt из eclipse https://paultavares.wordpress.com/2014/01/06/setup-an-eclipse-run-external-tool-configuration-for-grunt/
+
+fileApi
+http://blog.teamtreehouse.com/building-an-html5-text-editor-with-the-filesystem-apis
+https://developer.mozilla.org/en-US/docs/Web/API/File_Handle_API
+
+ol3
+http://christopherjennison.com/programming_tutorials/
