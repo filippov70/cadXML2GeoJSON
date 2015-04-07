@@ -7,9 +7,7 @@
  * 
  * 
  */
-module.exports = entitySpatial;
-	
-var entitySpatial = (function() {
+module.exports = function() {
 	
 	this.geometry = {
 		coordinates: []
@@ -30,7 +28,7 @@ var entitySpatial = (function() {
 				var geoContour = [];
 				for (var j = 0; j < contour.SpelementUnit.length; j++) {
 					var point = contour.SpelementUnit[j];
-					// console.log("object " + point.Ordinate.X);
+					console.log("object " + point.Ordinate.X);
 					var coords = [];
 					coords.push(point.Ordinate.Y);
 					coords.push(point.Ordinate.X);
@@ -43,7 +41,7 @@ var entitySpatial = (function() {
 	
 	return this;
 	
-})();
+};
 
-if (typeof module != "undefined" && module !== null && module.exports) module.exports = entitySpatial;
-else if (typeof define === "function" && define.amd) define(function() {return entitySpatial;});
+//if (typeof module != "undefined" && module !== null && module.exports) module.exports = entitySpatial;
+//else if (typeof define === "function" && define.amd) define(function() {return entitySpatial;});
