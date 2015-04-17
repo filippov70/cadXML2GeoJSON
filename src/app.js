@@ -14,6 +14,7 @@ var parsedData = {
 };
 
 function run() {
+    console.log('run is start');
 	// https://bitbucket.org/surenrao/xml2json
 	$.get('./testdata/doc8500717.xml', function(xml) {
 		//var json = $.xml2json(xml).CadastralBlocks;
@@ -56,6 +57,6 @@ function run() {
 //						map.getSize());
 			});
             
- run();
+ //run();
 }
 
