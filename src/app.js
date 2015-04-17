@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-var Converter = require('cadXML2GeoJSON.js');
+var Converter = require('./cadXML2GeoJSON.js');
 
 var parsedData = {
 	"type" : "FeatureCollection",
@@ -55,5 +55,7 @@ function run() {
 //				map.getView().fitExtent(vectorLayer.getSource().getExtent(),
 //						map.getSize());
 			});
+            
+ run();
 }
 
