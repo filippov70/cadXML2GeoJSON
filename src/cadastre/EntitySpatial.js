@@ -7,18 +7,16 @@
  * 
  * 
  */
-module.exports = function() {
+module.exports.getEntitySpatial = function(EntitySpatialObj) {
 	
 	this.geometry = {
 		coordinates: []
 	};
-	
-	this.getEntitySpatial = function (EntitySpatialObj) {
-		if (EntitySpatialObj !== undefined) {
+	if (EntitySpatialObj !== undefined) {
 			// утинная типизация для проверки наличия дырок в полигоне
 			if (EntitySpatialObj.SpatialElement.splice) {
-				 for (var k = 0; k < p.EntitySpatialObj.SpatialElement.length; k++) {
-					var contour = p.EntitySpatialObj.SpatialElement[k];
+				 for (var k = 0; k < EntitySpatialObj.SpatialElement.length; k++) {
+					var contour = EntitySpatialObj.SpatialElement[k];
 					for (var j = 0; j < contour.SpelementUnit.length; j++) {
 						var point = contour.SpelementUnit[j];
 					}
@@ -28,7 +26,6 @@ module.exports = function() {
 				var geoContour = [];
 				for (var j = 0; j < contour.SpelementUnit.length; j++) {
 					var point = contour.SpelementUnit[j];
-					console.log("object " + point.Ordinate.X);
 					var coords = [];
 					coords.push(point.Ordinate.Y);
 					coords.push(point.Ordinate.X);
@@ -36,11 +33,7 @@ module.exports = function() {
 				}
 				this.geometry.coordinates.push(geoContour);
 			}
-		}
-	};
-	
-	return this;
-	
+		};
 };
 
 //if (typeof module != "undefined" && module !== null && module.exports) module.exports = entitySpatial;
