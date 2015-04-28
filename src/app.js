@@ -6,24 +6,17 @@
 
 var Converter = require('./cadXML2GeoJSON.js');
 
-var parsedData = {
-	"type" : "FeatureCollection",
-	// "crs": null,
-	"features" : []
-
-};
-
 StartParse();
 
 function StartParse() {
 	// https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var VectorData;
-	$.get('./testdata/null-quartall.xml', function(xml) {
+	$.get('./testdata/doc8500717.xml', function(xml) {
 		//var json = $.xml2json(xml).CadastralBlocks;
 		// $("#data").html('<code>'+JSON.stringify(json)+'</code>');
 		//console.log(Converter.GeoJSON);
-		Converter.GeoJSON(xml);
+		console.log(Converter.GeoJSON(xml));
 
 	}).success(
 		function() {
