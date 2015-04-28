@@ -11,8 +11,8 @@ module.exports.GeoJSON = function (xmlData) {
         features : []
     };
     
-    console.log('start parse');
     var AllData = $.xml2json(xmlData).CadastralBlocks.CadastralBlock;
+    console.log(AllData.Parcels);
     for(var i=0; i<AllData.Parcels.Parcel.length; i++) {
         if (AllData.Parcels.Parcel[i].EntitySpatial !== null) {
             geoJSON.features.push(ES.getEntitySpatial(AllData.Parcels.Parcel[i].EntitySpatial));

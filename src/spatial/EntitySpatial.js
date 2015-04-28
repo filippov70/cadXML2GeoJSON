@@ -41,8 +41,8 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
         var ys = [];
         var contour = [];
         var pts = [];
-        for (var j = 0; j < SpatialElement.length; j++) {
-            var point = SpatialElement[j];
+        for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
+            var point = SpatialElement.SpelementUnit[j];
             var coords = [];
             xs.push(point.Ordinate.Y);
             ys.push(point.Ordinate.X);
@@ -52,6 +52,8 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
         }
         contour.push(pts);
         this.Area = polygonArea(xs, ys, xs.length);
+        console.log();
+        return contour;
     }
     
 	if (EntitySpatialObj !== undefined) {
