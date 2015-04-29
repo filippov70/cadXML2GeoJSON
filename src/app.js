@@ -17,43 +17,47 @@ function StartParse() {
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
         //console.log(Converter.GeoJSON);
         parsedData = Converter.GeoJSON(xml);
-        //console.log();
-
     }).success(
             function () {
-
+                // http://www.color-hex.com/
                 var fill = new ol.style.Fill({
-                    color: 'rgba(255,255,255,0.4)'
+                    color: '#a3bdc8'
                 });
                 var stroke = new ol.style.Stroke({
-                    color: '#3399CC',
-                    width: 1.25
+                    color: '#313030',
+                    width: 1
+                });
+                var text = new ol.style.Text({
+                    // TODO Подписать кадастровые номера
                 });
                 var styles = [
                     new ol.style.Style({
-                        fill: fill,
+                        //fill: fill,
                         stroke: stroke
                     })
                 ];
                 var vectorLayer = new ol.layer.Vector({
                     source: new ol.source.GeoJSON({
                         projection: 'EPSG:3857'
-                        
-                    })
+
+                    }),
+                    style: styles,
+                    opacity: 0.5
                 });
 
                 var format = new ol.format.GeoJSON();
-                for (i = 0; i < parsedData.features.length; i++) {
-                    console.log(parsedData.features[i].geometry);
-                    var geometryObj = format
-                            .readGeometry(parsedData.features[i].geometry);
-                    var feature = new ol.Feature({
-                        geometry: geometryObj//,
-                                //propA : parsedData.features[i].properties.cadnumber
-                    });
-                    vectorLayer.getSource().addFeature(feature);
-                }
-
+                for(var key in parsedData) {
+                    console.log('Создано объектов ' + key + ': ' + parsedData[key].features.length);
+                    for (i = 0; i < parsedData[key].features.length; i++) {
+                        var geometryObj = format
+                                .readGeometry(parsedData[key].features[i].geometry);
+                        var feature = new ol.Feature({
+                            geometry: geometryObj//,
+                                    //propA : parsedData.features[i].properties.cadnumber
+                        });
+                        vectorLayer.getSource().addFeature(feature);
+                    }
+                }    
                 var map = new ol.Map({
                     target: 'map',
                     layers: [

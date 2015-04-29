@@ -2,10 +2,7 @@
  * Модуль обработки геометрии типа полигон.
  * Один внешний контур и 0 или более внутренних контуров-"дырок"
  * 
- * GeoJSON geometry
- * Зпросто может быть что внешний контур может быть не первым в XML!!!
- * 
- * 
+ * GeoJSON geometry типа tEntitySpatialLandOut
  */
 
 //"geometry": {
@@ -15,6 +12,7 @@
 //        [100.0, 1.0], [100.0, 0.0] ]
 //      ]
 //  }
+
 
 module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
 	
@@ -79,7 +77,7 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
             if (MaxAreaIdx > 0) {
                 var mainCnt = cntrs.splice(MaxAreaIdx, 1);
                 cntrs.splice(0, 0, mainCnt);
-                console.log('Номер основного контура был ' + MaxAreaIdx);
+                //console.log('Номер основного контура был ' + MaxAreaIdx);
             }
             // Если это для многоконтурного объекта, то возвращем массив контуров
             if (partOfMultu) { 
