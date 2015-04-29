@@ -57,17 +57,17 @@ module.exports = function (grunt) {
 //                }
 //            }
 //        }
-//        ,
-//        watch: {
-//            files: ['src/*'],
-//            tasks: ['default']
-//        }
+        ,
+        watch: {
+            files: ['src/*'],
+            tasks: ['default']
+        }
     });
     //grunt.loadNpmTasks('grunt-jsdoc');
     //grunt.loadNpmTasks('grunt-contrib-uglify');
     //grunt.loadNpmTasks('grunt-contrib-jshint');
     //grunt.loadNpmTasks('grunt-contrib-qunit');
-    //grunt.loadNpmTasks('grunt-contrib-watch');
+   grunt.loadNpmTasks('grunt-contrib-watch');
    grunt.loadNpmTasks('grunt-browserify');
 //    grunt.loadNpmTasks('grunt-contrib-concat');
 //	grunt.registerTask('test', [ 'jshint', 'qunit' ]);

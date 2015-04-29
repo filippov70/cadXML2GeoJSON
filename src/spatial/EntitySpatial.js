@@ -26,61 +26,88 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
     //var EntitySpatial = [];
     var Area = 0.0;
     
+    // Вычисление площади замкнутого контура
     function polygonArea(Xs, Ys, numPoints) { 
-        area = 0;   
-        j = numPoints-1;
-        for (i=0; i<numPoints; i++)
-        { area = area +  (Xs[j]+Xs[i]) * (Ys[j]-Ys[i]); 
+        var area = 0;   
+        var j = numPoints-1;
+        for (var i=0; i<numPoints; i++)
+        { area = area +  ((Xs[j])+(Xs[i])) * ((Ys[j])-(Ys[i])); 
             j = i;  //j is previous vertex to i
         }
-        return area/2;
+        return Math.abs(area/2);
     }
     
+    // Создание одного замкнутого контура
     function createContour(SpatialElement) {
         var xs = [];
         var ys = [];
         var contour = [];
-        var pts = [];
+
         for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
             var point = SpatialElement.SpelementUnit[j];
-            var coords = [];
-            xs.push(point.Ordinate.Y);
-            ys.push(point.Ordinate.X);
-            coords.push(point.Ordinate.Y);
-            coords.push(point.Ordinate.X);
-            pts.push(coords);
+            var xy = [];
+            xs.push(parseFloat(point.Ordinate.Y));
+            ys.push(parseFloat(point.Ordinate.X));
+            xy.push(parseFloat(point.Ordinate.Y));
+            xy.push(parseFloat(point.Ordinate.X));
+            contour.push(xy);
         }
-        contour.push(pts);
-        this.Area = polygonArea(xs, ys, xs.length);
-        console.log();
+        Area = polygonArea(xs, ys, xs.length);
+        //console.log(Area);
         return contour;
     }
     
-	if (EntitySpatialObj !== undefined) {
+	if ((EntitySpatialObj !== undefined) && (EntitySpatialObj !== null)) {
+        var cntrs = [];
         // Утинная типизация для проверки наличия дырок в полигоне
         // В Росреестре не следят за порядком контуров полигона
         if (EntitySpatialObj.SpatialElement.splice) {
-            var cntrs = [];
+            console.log('Полигон с дырками');
+            
             var MaxArea;
             var MaxAreaIdx = 0;
             for (var k = 0; k < EntitySpatialObj.SpatialElement.length; k++) {
                 var contour = EntitySpatialObj.SpatialElement[k];
                 var cnt = createContour(contour);
                 cntrs.push(cnt);
-                if(this.Area > MaxArea) {
-                    MaxArea = this.Area;
+                if(Area > MaxArea) {
+                    MaxArea = Area;
                     MaxAreaIdx = k;
                 }
             }
+            // Перемещаем основной (наружний) контур в начало массива
             if (MaxAreaIdx > 0) {
                 var mainCnt = cntrs.splice(MaxAreaIdx, 1);
                 cntrs.splice(0, 0, mainCnt);
                 console.log('Номер основного контура был ' + MaxAreaIdx);
             }
-            return cntrs;
+            // Если это для многоконтурного объекта, то возвращем массив контуров
+            if (partOfMultu) { 
+                return cntrs;
+            }
+            
+            // Если это для простого объекта, то возвращем объект geometry
+            else {
+                return {
+                    type: "Polygon",
+                    coordinates: cntrs
+                };
+            }
         } else {
             var contour = EntitySpatialObj.SpatialElement;
-            return createContour(contour);
+            var polygon = createContour(contour);
+            cntrs.push(polygon);
+            // Если это для многоконтурного объекта, то возвращем массив контуров
+            if (partOfMultu) {
+                return cntrs;
+            }
+            // Если это для простого объекта, то возвращем объект geometry
+            else {
+                return {
+                    type: "Polygon",
+                    coordinates: cntrs
+                };
+            }
         }
     }
 };
