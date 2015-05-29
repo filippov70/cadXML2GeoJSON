@@ -1,10 +1,6 @@
 var ES = require('./spatial/EntitySpatial.js');
 
 module.exports.GeoJSON = function (xmlData) {
-//	var Parcels;
-//	var Quartal;
-//	var Zones;
-//	var Bounds;
     
     var geoJSONQuartal = {
         type: "FeatureCollection",
@@ -22,13 +18,13 @@ module.exports.GeoJSON = function (xmlData) {
         type: "FeatureCollection",
         features : []
     };
-        var geoJSONRealty = {
+    var geoJSONRealty = {
         type: "FeatureCollection",
         features : []
     };
 
     var AllData = $.xml2json(xmlData).CadastralBlocks.CadastralBlock;
-    console.log(AllData);
+    //console.log(AllData);
        
     // Обработка квартала. Не может быть многоконтурным           
     if (AllData.SpatialData !== null) {

@@ -36,11 +36,12 @@ function StartParse() {
                         stroke: stroke
                     })
                 ];
+                
+                var vectorSource = new ol.source.Vector({
+                    //projection: 'EPSG:3857'
+                });
                 var vectorLayer = new ol.layer.Vector({
-                    source: new ol.source.GeoJSON({
-                        projection: 'EPSG:3857'
-
-                    }),
+                    source: vectorSource,
                     style: styles,
                     opacity: 0.5
                 });
@@ -57,7 +58,8 @@ function StartParse() {
                         });
                         vectorLayer.getSource().addFeature(feature);
                     }
-                }    
+                }  
+                
                 var map = new ol.Map({
                     target: 'map',
                     layers: [

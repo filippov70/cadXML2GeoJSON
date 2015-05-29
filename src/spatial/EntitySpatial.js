@@ -60,7 +60,7 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
         // Утинная типизация для проверки наличия дырок в полигоне
         // В Росреестре не следят за порядком контуров полигона
         if (EntitySpatialObj.SpatialElement.splice) {
-            console.log('Полигон с дырками');
+            //console.log('Полигон с дырками');
             
             var MaxArea;
             var MaxAreaIdx = 0;
