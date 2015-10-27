@@ -192,7 +192,7 @@ function StartParse() {
 //                            });
 //                    if (url) {
 //
-                        createInfoContetnt(url);
+//                        createInfoContetnt(url);
 //                    }
             
                 });
