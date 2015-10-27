@@ -7,6 +7,7 @@
     "grunt-contrib-concat" : "latest",
     "grunt-contrib-uglify" : "latest",
     "grunt-contrib-qunit" : "latest",
-    "grunt-contrib-watch"  : "latest" 
+    "grunt-browserify": "latest",
+    "grunt-contrib-watch": "latest"
     }
 }
