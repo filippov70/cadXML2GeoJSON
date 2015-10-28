@@ -222,17 +222,32 @@ function StartParse() {
 
                 function createInfoContetnt(features, coordinate) {
                     var cn = '';
+                    var st = '';
+                    var cat = '';
+                    var name = '';
                     for (var i = 0; i < features.length; i++) {
                         var f = features[i];
                         if (f.get('cadastreNumber')!== undefined) {
                             cn = f.get('cadastreNumber');
+                        }
+                        if (f.get('State')!== undefined) {
+                            st = f.get('State');
+                        }
+                        if (f.get('Name')!== undefined) {
+                            name = f.get('Name');
+                        }
+                        if (f.get('Category')!== undefined) {
+                            cat = f.get('Category');
                         }
                         //console.log(features[i].getProperties());
                     }
                     var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
                             coordinate, 'EPSG:3857', 'EPSG:4326'));
 
-                    content.innerHTML = '<p>Кадастровый номер:</p><code>' + cn +'</code>';
+                    content.innerHTML = '<p>Кадастровый номер:<code>' + cn +
+                            '</code></p><p>Объект:<code>' + name +'</code></p>'+
+                            '</code><p>Статус:<code>' + st +'</code></p>'+
+                            '</code><p>Категория земель:<code>' + cat +'</code></p>';
                     overlay.setPosition(coordinate);
                 }
             });

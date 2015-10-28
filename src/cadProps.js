@@ -32,19 +32,34 @@ var dStates = {
     '07': 'Снят с учета',
     '08': 'Аннулированный'
 };
-
+// Тип  объекта недвижимости
+var dParcels = {
+    '01': 'Землепользование',
+    '02': 'Единое землепользование',
+    '03': 'Обособленный участок',
+    '04': 'Условный участок',
+    '05': 'Многоконтурный участок',
+    '06': 'Значение отсутствует'
+};
+// Категория земель
+var dCategories = {
+    '003001000000': 'Земли сельскохозяйственного назначения',
+    '003002000000': 'Земли населённых пунктов',
+    '003003000000': 'Земли промышленности, энергетики, транспорта, связи, радиовещания, телевидения, информатики, земли для обеспечения космической деятельности, земли обороны, безопасности и земли иного специального назначения',
+    '003004000000': 'Земли особо охраняемых территорий и объектов',
+    '003005000000': 'Земли лесного фонда',
+    '003006000000': 'Земли водного фонда',
+    '003007000000': 'Земли запаса',
+    '003008000000': 'Категория не установлена'
+};
 var ParcelProperties;
 
-// Functions
-function getValueFromDict(Key, Dict) {
-    var retVal = '';
-    switch (Dict) {
-        case 'dStates':
-        {
-            retVal = '06';
+function getValueFromDict(Key, Dic) {
+    for (var k in Dic) {
+        if (k === Key) {
+            return Dic[k];
         }
     }
-    return retVal;
 }
 
 module.exports.getProperties = function (Feature, FeatureType) {
@@ -53,9 +68,9 @@ module.exports.getProperties = function (Feature, FeatureType) {
         {
             ParcelProperties = {
                 cadastreNumber: '', // require
-                Sate: '01', // dStates require
+                State: '01', // dStates require
                 DateCreated: '',
-                Name: '', //dNames require
+                Name: '', //dParcels require
                 Category: '', // dCategories // require
                 Area: {// requre
                     Area: 0, // require
@@ -68,7 +83,9 @@ module.exports.getProperties = function (Feature, FeatureType) {
                 }
             };
             ParcelProperties.cadastreNumber = Feature.CadastralNumber;
-            ParcelProperties.Sate = getValueFromDict(Feature.State, 'dStates');
+            ParcelProperties.State = getValueFromDict(Feature.State, dStates);
+            ParcelProperties.Name = getValueFromDict(Feature.Name, dParcels);
+            ParcelProperties.Category = getValueFromDict(Feature.Category, dCategories);
             break;
         }
     }
