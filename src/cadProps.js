@@ -33,44 +33,43 @@ var dStates = {
     '08': 'Аннулированный'
 };
 
-// Properties
-
-var ParcelProperties = {
-    CadastreNumber: '', // require
-    Sate : '01', // dStates require
-    DateCreated: '',
-    
-    Name: '', //dNames requre
-    Category : '', // dCategories // require
-    Area: { // requre
-        Area: 0, // require
-        Unit: '', //dUnit require
-        Inaccuracy: '' // d20_2
-    },
-    Utilization: { // require
-        ByDoc: '',
-        Utilization: '' // dUtilization require
-    }
-};
-
+var ParcelProperties;
 
 // Functions
 function getValueFromDict(Key, Dict) {
     var retVal = '';
     switch (Dict) {
-        case 'dStates': {
-                
+        case 'dStates':
+        {
+            retVal = '06';
         }
     }
     return retVal;
 }
 
-module.exports.getProperties = function(Feature, FeatureType) {
-    switch (FeatureType){
-        case 'Parcel' : {
-                ParcelProperties.CadastreNumber = Feature.CadastralNumber;
-                ParcelProperties.Sate = getValueFromDict(Feature.State);
-                break;
+module.exports.getProperties = function (Feature, FeatureType) {
+    switch (FeatureType) {
+        case 'Parcel' :
+        {
+            ParcelProperties = {
+                cadastreNumber: '', // require
+                Sate: '01', // dStates require
+                DateCreated: '',
+                Name: '', //dNames require
+                Category: '', // dCategories // require
+                Area: {// requre
+                    Area: 0, // require
+                    Unit: '', //dUnit require
+                    Inaccuracy: '' // d20_2
+                },
+                Utilization: {// require
+                    ByDoc: '',
+                    Utilization: '' // dUtilization require
+                }
+            };
+            ParcelProperties.cadastreNumber = Feature.CadastralNumber;
+            ParcelProperties.Sate = getValueFromDict(Feature.State, 'dStates');
+            break;
         }
     }
     return {

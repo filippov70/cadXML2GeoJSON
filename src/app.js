@@ -9,6 +9,25 @@ var map;
 StartParse();
 
 function StartParse() {
+
+    var container = document.getElementById('popup');
+    var content = document.getElementById('popup-content');
+    var closer = document.getElementById('popup-closer');
+
+    closer.onclick = function () {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+    };
+
+    var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+        element: container,
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        }
+    }));
+
     // https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
@@ -71,7 +90,7 @@ function StartParse() {
                     //projection: 'EPSG:3857'
                 });
                 var parcelSource = new ol.source.Vector({
-                    //projection: 'EPSG:3857'
+                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONParcels)
                 });
                 var realtySource = new ol.source.Vector({
                     //projection: 'EPSG:3857'
@@ -108,15 +127,15 @@ function StartParse() {
                 });
 
                 var format = new ol.format.GeoJSON();
-                var parcels = parsedData.geoJSONParcels;
-                for (i = 0; i < parcels.features.length; i++) {
-                    var geometryObj = format.readGeometry(parcels.features[i].geometry);
-                    var feature = new ol.Feature({
-                        geometry: geometryObj//,
-                                //propA : parsedData.features[i].properties.cadnumber
-                    });
-                    parcelLayer.getSource().addFeature(feature);
-                }
+//                var parcels = parsedData.geoJSONParcels;
+//                for (i = 0; i < parcels.features.length; i++) {
+//                    var geometryObj = format.readGeometry(parcels.features[i].geometry);
+//                    var feature = new ol.Feature({
+//                        geometry: geometryObj//,
+//                                //propA : parsedData.features[i].properties.cadnumber
+//                    });
+//                    parcelLayer.getSource().addFeature(feature);
+//                }
                 var realtys = parsedData.geoJSONRealty;
                 for (i = 0; i < realtys.features.length; i++) {
                     var geometryObj = format.readGeometry(realtys.features[i].geometry);
@@ -177,6 +196,7 @@ function StartParse() {
                         quartalLayer, boundLayer, zoneLayer,
                         parcelLayer, realtyLayer
                     ],
+                    overlays: [overlay],
                     view: new ol.View({
                         center: [0, 0],
                         zoom: 7
@@ -185,43 +205,35 @@ function StartParse() {
                 map.getView().fit(quartalLayer.getSource().getExtent(), map.getSize());
 
                 map.on('singleclick', function (evt) {
-//                    var viewResolution = /** @type {number} */ (map.getView().getResolution());
-//                    var url = parcelSource.getFeatureInfoUrl(
-//                            evt.coordinate, viewResolution, 'EPSG:3857', {
-//                                'INFO_FORMAT': 'application/json' //text/xml, application/geojson, text/html
-//                            });
-//                    if (url) {
-//
-//                        createInfoContetnt(url);
-//                    }
-            
+                    var features = [];
+                    var coordinate = evt.coordinate;
+
+                    for (var i = 0; i < map.getLayers().getLength(); i++) {
+                        var layer = map.getLayers().item(i);
+                        if (layer instanceof ol.layer.Vector) {
+                            var feature = layer.getSource().getClosestFeatureToCoordinate(evt.coordinate);
+                            if (feature) {
+                                features.push(feature);
+                            }
+                        }
+                    }
+                    createInfoContetnt(features, coordinate);
                 });
 
-                function createInfoContetnt(url) {
-                    $.ajax({
-                        url: url
-                    }).done(function (data) {
-                        //$('#infocontent').html('');
-//                        if (data.features.length > 0) {
-//                            $('#info').modal({
-//                                show: true,
-//                                remote: ''
-//                            });
-//                            var additionalInfo = '';
-//                            if (data.features[0].properties.add_prop !== undefined) {
-//
-//                            }
-//                            $('#infocontent').html(
-//                                    "<h2>" + data.features[0].properties.name + "</h2>" +
-//                                    "</br><h3>" + data.features[0].properties.a_strt +
-//                                    " " + data.features[0].properties.a_hsnmbr + "</h3>"
-//                                    );
-//                        }
-                        console.log(data);
-                        
+                function createInfoContetnt(features, coordinate) {
+                    var cn = '';
+                    for (var i = 0; i < features.length; i++) {
+                        var f = features[i];
+                        if (f.get('cadastreNumber')!== undefined) {
+                            cn = f.get('cadastreNumber');
+                        }
+                        //console.log(features[i].getProperties());
                     }
-                    );
+                    var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+                            coordinate, 'EPSG:3857', 'EPSG:4326'));
 
+                    content.innerHTML = '<p>Кадастровый номер:</p><code>' + cn +'</code>';
+                    overlay.setPosition(coordinate);
                 }
             });
 
