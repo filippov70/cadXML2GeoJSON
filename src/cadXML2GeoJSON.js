@@ -148,34 +148,50 @@ module.exports.GeoJSON = function (xmlData) {
         }
     }
     // Обработка всех земельных учатков и их частей
-    for (var i = 0; i < AllData.Parcels.Parcel.length; i++) {
-
-        if (AllData.Parcels.Parcel[i].EntitySpatial !== null) {
-            var spObj = ES.getEntitySpatial(AllData.Parcels.Parcel[i].EntitySpatial, false);
+    for (var e = 0; e < AllData.Parcels.Parcel.length; e++) {
+        var spObj = null;
+        // Земельный участок
+        var feature = {
+            'type': 'Feature'
+        };
+        if (AllData.Parcels.Parcel[e].EntitySpatial !== undefined) {
+            spObj = ES.getEntitySpatial(AllData.Parcels.Parcel[e].EntitySpatial, false);
             if ((spObj === undefined) || (spObj.length === 0)) {
                 continue;
             }
 
         }
         // Многоконтурный
-        else if (AllData.Parcels.Parcel[i].Contours) {
-
+        else if (AllData.Parcels.Parcel[e].Contours) {
+            var Contours = AllData.Parcels.Parcel[e].Contours.Contour;
+            var multiPolygon = [];
+            for (var c=0; c<Contours.length; c++){
+                var es = Contours[c].EntitySpatial;
+                var p = ES.getEntitySpatial(es, true);
+                if (p) {
+                    multiPolygon.push(p);
+                }
+            }
+            spObj = {
+                    type: "MultiPolygon",
+                    coordinates: multiPolygon
+                };
         } else {
             console.log('Нет описания пространственной составляющей');
         }
-        // Земельный участок
-        var feature = {
-            'type': 'Feature'
-                    //geometry: {}
-        };
-        feature.geometry = spObj;
-        // Остальные свойства....
-        var props = Props.getProperties(AllData.Parcels.Parcel[i], 'Parcel');
-        if (props) {
-            feature.properties = props.properties;
+
+        // Если нет геометрии, то объект не нужен
+        if (spObj) {
+            feature.geometry = spObj;
+            // Остальные свойства....
+            var props = Props.getProperties(AllData.Parcels.Parcel[e], 'Parcel');
+            if (props) {
+                feature.properties = props.properties;
+            }
+            console.log('Объект создан. КН:'+feature.properties.cadastreNumber);
+            geoJSONParcels.features.push(feature);
         }
 
-        geoJSONParcels.features.push(feature);
     }
 
     // Обработка пунктов ОМС
