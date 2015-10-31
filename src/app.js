@@ -43,7 +43,7 @@ function StartParse() {
                     color: '#a3bdc8'
                 });
                 var realtylFill = new ol.style.Fill({
-                    color: '#f3e5f1'
+                    color: 'red'
                 });
 
                 var stroke = new ol.style.Stroke({
@@ -93,7 +93,7 @@ function StartParse() {
                     features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONParcels)
                 });
                 var realtySource = new ol.source.Vector({
-                    //projection: 'EPSG:3857'
+                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealty)
                 });
                 var boundSource = new ol.source.Vector({
                     //projection: 'EPSG:3857'
@@ -136,14 +136,14 @@ function StartParse() {
 //                    });
 //                    parcelLayer.getSource().addFeature(feature);
 //                }
-                var realtys = parsedData.geoJSONRealty;
+                var realtys = parsedData.geoJSONRealtyCircle;
+                // vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
                 for (i = 0; i < realtys.features.length; i++) {
-                    var geometryObj = format.readGeometry(realtys.features[i].geometry);
-                    var feature = new ol.Feature({
-                        geometry: geometryObj//,
-                                //propA : parsedData.features[i].properties.cadnumber
-                    });
-                    realtyLayer.getSource().addFeature(feature);
+                    console.log(realtys.features[i]);
+                    realtyLayer.getSource().addFeature(
+                            new ol.Feature(new ol.geom.Circle(
+                            [realtys.features[i].geometry.coordinates[0], realtys.features[i].geometry.coordinates[1]], 
+                    realtys.features[i].geometry.radius)));
                 }
                 var zones = parsedData.geoJSONZones;
                 for (i = 0; i < zones.features.length; i++) {

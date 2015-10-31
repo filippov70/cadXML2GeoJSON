@@ -23,9 +23,18 @@ module.exports.GeoJSON = function (xmlData) {
         type: "FeatureCollection",
         features: []
     };
+    // В GeoJSON нет окружностей и обрабатывать стандартными парсерами нельзя
+    var geoJSONRealtyCircle = {
+        type: "CircleCollection",
+        features: []
+    };
+    var geoJSONOSMPoints = {
+        type: "FeatureCollection",
+        features: []
+    };
 
     var AllData = $.xml2json(xmlData).CadastralBlocks.CadastralBlock;
-    //console.log(AllData);
+    console.log(AllData);
 
     // Обработка квартала. Не может быть многоконтурным           
     if (AllData.SpatialData !== null) {
@@ -35,8 +44,7 @@ module.exports.GeoJSON = function (xmlData) {
         }
         // Квартал
         var feature = {
-            properties: {},
-            geometry: {}
+            'type': 'Feature'
         };
         feature.geometry = spObj;
         // Остальные свойства....
@@ -48,6 +56,10 @@ module.exports.GeoJSON = function (xmlData) {
 
     // Обработка границ. Не могут быть многоконтурными
     if (AllData.Bounds !== null) {
+        // Граница
+        var feature = {
+            'type': 'Feature'
+        };
         if (AllData.Bounds.Bound.splice) {
             for (var i = 0; i < AllData.Bounds.Bound.length; i++) {
                 if (AllData.Bounds.Bound[i].Boundaries.Boundary.splice) {
@@ -55,33 +67,23 @@ module.exports.GeoJSON = function (xmlData) {
                         if (AllData.Bounds.Bound[i].Boundaries.Boundary[k].EntitySpatial !== null) {
                             var spObj = ES.getEntitySpatial(AllData.Bounds.Bound[i].Boundaries.Boundary[k].EntitySpatial, false);
                             if ((spObj === undefined) || (spObj.length === 0)) {
-                                console.log('Объект квартала с пустой геометрией! Объект будет пропущен.');
+                                //console.log('Объект с пустой геометрией! Объект будет пропущен.');
                                 continue;
                             }
-                            // Граница
-                            var feature = {
-                                properties: {},
-                                geometry: {}
-                            };
                             feature.geometry = spObj;
                             // Остальные свойства....
 
                             geoJSONBounds.features.push(feature);
                         } else {
-                            console.log('Нет описания пространственной составляющей границы');
+                            //console.log('Нет описания пространственной составляющей границы');
                         }
                     }
                 } else {
                     var spObj = ES.getEntitySpatial(AllData.Bounds.Bound[i].Boundaries.Boundary.EntitySpatial, false);
                     if ((spObj === undefined) || (spObj.length === 0)) {
-                        console.log('Объект квартала с пустой геометрией! Объект будет пропущен.');
+                        //console.log('Объект с пустой геометрией! Объект будет пропущен.');
                         continue;
                     }
-                    // Граница
-                    var feature = {
-                        properties: {},
-                        geometry: {}
-                    };
                     feature.geometry = spObj;
                     // Остальные свойства....
 
@@ -91,13 +93,8 @@ module.exports.GeoJSON = function (xmlData) {
         } else {
             var spObj = ES.getEntitySpatial(AllData.Bounds.Bound.Boundaries.Boundary.EntitySpatial, false);
             if ((spObj === undefined) || (spObj.length === 0)) {
-                console.log('Объект квартала с пустой геометрией! Объект будет пропущен.');
+                //console.log('Объект  с пустой геометрией! Объект будет пропущен.');
             }
-            // Граница
-            var feature = {
-                properties: {},
-                geometry: {}
-            };
             feature.geometry = spObj;
             // Остальные свойства....
 
@@ -106,6 +103,10 @@ module.exports.GeoJSON = function (xmlData) {
     }
     // Обработка зон. Не могут быть многоконтурными
     if (AllData.Zones !== null) {
+        // Зона
+        var feature = {
+            'type': 'Feature'
+        };
         if (AllData.Zones.Zone.splice) {
             for (var i = 0; i < AllData.Zones.Zone.length; i++) {
                 if (AllData.Zones.Zone[i].EntitySpatial !== null) {
@@ -114,13 +115,7 @@ module.exports.GeoJSON = function (xmlData) {
                         console.log('Объект квартала с пустой геометрией! Объект будет пропущен.');
                         continue;
                     }
-                    // Зона
-                    var feature = {
-                        properties: {},
-                        geometry: {}
-                    };
                     feature.geometry = spObj;
-                    // Остальные свойства....
 
                     geoJSONZones.features.push(feature);
                 } else {
@@ -131,15 +126,9 @@ module.exports.GeoJSON = function (xmlData) {
             if (AllData.Zones.Zone.EntitySpatial !== null) {
                 var spObj = ES.getEntitySpatial(AllData.Zones.Zone.EntitySpatial, false);
                 if ((spObj === undefined) || (spObj.length === 0)) {
-                    console.log('Объект квартала с пустой геометрией! Объект будет пропущен.');
+                    console.log('Объект с пустой геометрией! Объект будет пропущен.');
                 }
-                // Зона
-                var feature = {
-                    properties: {},
-                    geometry: {}
-                };
                 feature.geometry = spObj;
-                // Остальные свойства....
 
                 geoJSONZones.features.push(feature);
             } else {
@@ -147,7 +136,7 @@ module.exports.GeoJSON = function (xmlData) {
             }
         }
     }
-    // Обработка всех земельных учатков и их частей
+    // Обработка всех земельных участков
     for (var e = 0; e < AllData.Parcels.Parcel.length; e++) {
         var spObj = null;
         // Земельный участок
@@ -165,7 +154,7 @@ module.exports.GeoJSON = function (xmlData) {
         else if (AllData.Parcels.Parcel[e].Contours) {
             var Contours = AllData.Parcels.Parcel[e].Contours.Contour;
             var multiPolygon = [];
-            for (var c=0; c<Contours.length; c++){
+            for (var c = 0; c < Contours.length; c++) {
                 var es = Contours[c].EntitySpatial;
                 var p = ES.getEntitySpatial(es, true);
                 if (p) {
@@ -173,11 +162,11 @@ module.exports.GeoJSON = function (xmlData) {
                 }
             }
             spObj = {
-                    type: "MultiPolygon",
-                    coordinates: multiPolygon
-                };
+                type: "MultiPolygon",
+                coordinates: multiPolygon
+            };
         } else {
-            console.log('Нет описания пространственной составляющей');
+            //console.log('Нет описания пространственной составляющей');
         }
 
         // Если нет геометрии, то объект не нужен
@@ -188,21 +177,76 @@ module.exports.GeoJSON = function (xmlData) {
             if (props) {
                 feature.properties = props.properties;
             }
-            console.log('Объект создан. КН:'+feature.properties.cadastreNumber);
+            console.log('Объект создан. КН:' + feature.properties.cadastreNumber);
             geoJSONParcels.features.push(feature);
         }
 
     }
+    // Обработка строений. Не могут быть многоконтурными
+    if (AllData.ObjectsRealty.ObjectRealty !== null) {
+        if (AllData.ObjectsRealty.ObjectRealty.splice) {
 
+            function processES(EntitySpatial) {
+                var spObj = ES.getEntitySpatial(EntitySpatial);
+                if (spObj) {
+                    feature.geometry = spObj;
+                    if (spObj.type === 'Circle') {
+                        geoJSONRealtyCircle.features.push(feature);
+                    } else {
+                        geoJSONRealty.features.push(feature);
+                    }
+                } else {
+                    console.log('Объект с пустой геометрией! Объект будет пропущен.');
+                }
+            }
+
+            for (var i = 0; i < AllData.ObjectsRealty.ObjectRealty.length; i++) {
+                var spObj = null;
+                // ОКС
+                var feature = {
+                    'type': 'Feature'
+                };
+                // строения
+                if (AllData.ObjectsRealty.ObjectRealty[i].Building) {
+                    if (AllData.ObjectsRealty.ObjectRealty[i].Building.EntitySpatial) {
+                        var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Building, 'Building');
+                        if (props) {
+                            feature.properties = props.properties;
+                        }
+                        processES(AllData.ObjectsRealty.ObjectRealty[i].Building.EntitySpatial);
+                    }
+                }
+                // объекты незавершённого строительства
+                else if (AllData.ObjectsRealty.ObjectRealty[i].Uncompleted) {
+                    if (AllData.ObjectsRealty.ObjectRealty[i].Uncompleted.EntitySpatial) {
+                        var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted, 'Uncompleted');
+                        if (props) {
+                            feature.properties = props.properties;
+                        }
+                        processES(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted.EntitySpatial);
+                    }
+                }
+                // сооружения
+                else if (AllData.ObjectsRealty.ObjectRealty[i].Construction) {
+                    if (AllData.ObjectsRealty.ObjectRealty[i].Construction.EntitySpatial) {
+                        var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Construction, 'Construction');
+                        if (props) {
+                            feature.properties = props.properties;
+                        }
+                        processES(AllData.ObjectsRealty.ObjectRealty[i].Construction.EntitySpatial);
+                    }
+                }
+            }
+        }
+    }
     // Обработка пунктов ОМС
-
-
-
+    
     return {
         geoJSONQuartal: geoJSONQuartal,
         geoJSONBounds: geoJSONBounds,
         geoJSONZones: geoJSONZones,
         geoJSONParcels: geoJSONParcels,
-        geoJSONRealty: geoJSONRealty
+        geoJSONRealty: geoJSONRealty,
+        geoJSONRealtyCircle: geoJSONRealtyCircle
     };
 };

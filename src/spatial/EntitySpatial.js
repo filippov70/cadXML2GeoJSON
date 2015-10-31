@@ -14,61 +14,73 @@
 //  }
 
 
-module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
-	
+module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
+
 //	this.geometry = {
 //        type: '',
 //		coordinates: []
 //	};
-    
+
     //var EntitySpatial = [];
     var Area = 0.0;
-    
+
     // Вычисление площади замкнутого контура
-    function polygonArea(Xs, Ys, numPoints) { 
-        var area = 0;   
-        var j = numPoints-1;
-        for (var i=0; i<numPoints; i++)
-        { area = area +  ((Xs[j])+(Xs[i])) * ((Ys[j])-(Ys[i])); 
+    function polygonArea(Xs, Ys, numPoints) {
+        var area = 0;
+        var j = numPoints - 1;
+        for (var i = 0; i < numPoints; i++)
+        {
+            area = area + ((Xs[j]) + (Xs[i])) * ((Ys[j]) - (Ys[i]));
             j = i;  //j is previous vertex to i
         }
-        return Math.abs(area/2);
+        return Math.abs(area / 2);
     }
-    
+
     // Создание одного замкнутого контура
     function createContour(SpatialElement) {
         var xs = [];
         var ys = [];
         var contour = [];
-
-        for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
-            var point = SpatialElement.SpelementUnit[j];
-            var xy = [];
-            xs.push(parseFloat(point.Ordinate.Y));
-            ys.push(parseFloat(point.Ordinate.X));
-            xy.push(parseFloat(point.Ordinate.Y));
-            xy.push(parseFloat(point.Ordinate.X));
-            contour.push(xy);
+        // проверка на окружность
+        if ((partOfMultu === undefined) &&
+                (SpatialElement.SpelementUnit.R !== undefined)) {
+            console.log('Circle');
+            return {
+                'R': SpatialElement.SpelementUnit.R,
+                'X': SpatialElement.SpelementUnit.Ordinate.Y,
+                'Y': SpatialElement.SpelementUnit.Ordinate.X
+            };
+        } else {
+            for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
+                var point = SpatialElement.SpelementUnit[j];
+                var xy = [];
+                xs.push(parseFloat(point.Ordinate.Y));
+                ys.push(parseFloat(point.Ordinate.X));
+                xy.push(parseFloat(point.Ordinate.Y));
+                xy.push(parseFloat(point.Ordinate.X));
+                contour.push(xy);
+            }
+            Area = polygonArea(xs, ys, xs.length);
+            //console.log(Area);
+            return contour;
         }
-        Area = polygonArea(xs, ys, xs.length);
-        //console.log(Area);
-        return contour;
     }
-    
-	if ((EntitySpatialObj !== undefined) && (EntitySpatialObj !== null)) {
+
+    if ((EntitySpatialObj !== undefined) && (EntitySpatialObj !== null)) {
         var cntrs = [];
         // Утинная типизация для проверки наличия дырок в полигоне
         // В Росреестре не следят за порядком контуров полигона
         if (EntitySpatialObj.SpatialElement.splice) {
             //console.log('Полигон с дырками');
-            
+
             var MaxArea;
             var MaxAreaIdx = 0;
             for (var k = 0; k < EntitySpatialObj.SpatialElement.length; k++) {
                 var contour = EntitySpatialObj.SpatialElement[k];
                 var cnt = createContour(contour);
-                cntrs.push(cnt);
-                if(Area > MaxArea) {
+                if (cnt)
+                    cntrs.push(cnt);
+                if (Area > MaxArea) {
                     MaxArea = Area;
                     MaxAreaIdx = k;
                 }
@@ -79,11 +91,11 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
                 cntrs.splice(0, 0, mainCnt);
                 //console.log('Номер основного контура был ' + MaxAreaIdx);
             }
+
             // Если это для многоконтурного объекта, то возвращем массив контуров
-            if (partOfMultu) { 
+            if (partOfMultu) {
                 return cntrs;
             }
-            
             // Если это для простого объекта, то возвращем объект geometry
             else {
                 return {
@@ -91,6 +103,7 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
                     coordinates: cntrs
                 };
             }
+
         } else {
             var contour = EntitySpatialObj.SpatialElement;
             var polygon = createContour(contour);
@@ -98,6 +111,19 @@ module.exports.getEntitySpatial = function(EntitySpatialObj, partOfMultu) {
             // Если это для многоконтурного объекта, то возвращем массив контуров
             if (partOfMultu) {
                 return cntrs;
+            }
+            // для ОКС. Только один контур
+            else if (partOfMultu === undefined) {
+                if (cntrs[0].R) {
+                    return {
+                        "type": "Circle",
+                        "coordinates": [cntrs[0].X, cntrs[0].Y],
+                        "radius": cntrs[0].R,
+                        "properties": {
+                            "radius_units": "m"
+                        }
+                    };
+                }
             }
             // Если это для простого объекта, то возвращем объект geometry
             else {
