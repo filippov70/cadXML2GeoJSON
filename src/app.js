@@ -42,13 +42,10 @@ function StartParse() {
                 var parcelFill = new ol.style.Fill({
                     color: '#a3bdc8'
                 });
-                var realtylFill = new ol.style.Fill({
-                    color: '#FF0000'
+                var realtylStroke = new ol.style.Stroke({
+                    color: '#FF0000',
+                    width: .6
                 });
-//                var realtylCircle = new ol.style.Circle({
-//                    radius: 5,
-//                    fill: '#FF0000'
-//                });
 
                 var stroke = new ol.style.Stroke({
                     color: '#313030',
@@ -76,8 +73,7 @@ function StartParse() {
                     stroke: stroke
                 });
                 var realtyStyle = new ol.style.Style({
-                    fill: realtylFill,
-                    stroke: stroke
+                    stroke: realtylStroke
                 });
                 var quartalStyle = new ol.style.Style({
                     stroke: quartalStroke
@@ -119,7 +115,8 @@ function StartParse() {
                 var realtyLayer = new ol.layer.Vector({
                     title: 'ОКС',
                     source: realtySource,
-                    style: realtyStyle
+                    style: realtyStyle,
+                    opacity: 0.5
                 });
                 var boundLayer = new ol.layer.Vector({
                     title: 'Границы',

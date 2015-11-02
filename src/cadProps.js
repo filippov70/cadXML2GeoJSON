@@ -786,6 +786,11 @@ var dAssBuilding = {
 };
 
 var ParcelProperties;
+var ConstructionProperties;
+var UncompletedProperties;
+var BuildingProperties;
+var ZoneProperties;
+var BoundProperties;
 
 function getValueFromDict(Key, Dic) {
     for (var k in Dic) {
@@ -821,8 +826,46 @@ module.exports.getProperties = function (Feature, FeatureType) {
             ParcelProperties.Category = getValueFromDict(Feature.Category, dCategories);
             break;
         }
+        case 'Construction':{
+            ConstructionProperties = {
+                cadastreNumber: '', // 
+                ObjectType: '', // require
+                AssignationName: ''
+            }
+            if (Feature.CadastralNumber) {
+                ConstructionProperties.cadastreNumber = Feature.CadastralNumber;
+            } else {
+                ConstructionProperties.cadastreNumber = '';
+            }
+            
+            ConstructionProperties.AssignationName = Feature.AssignationName;
+            ConstructionProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+        }
+        case 'Building':{
+            ConstructionProperties = {
+                cadastreNumber: '', // 
+                ObjectType: '', // require
+                AssignationName: ''
+            }
+            if (Feature.CadastralNumber) {
+                ConstructionProperties.cadastreNumber = Feature.CadastralNumber;
+            } else {
+                ConstructionProperties.cadastreNumber = '';
+            }
+            
+            ConstructionProperties.AssignationName = Feature.AssignationName;
+            ConstructionProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+        }
+        default :{
+                console.log('Тип объекта не распознан');
+        }
     }
     return {
-        properties: ParcelProperties
+        parcelProperties: ParcelProperties,
+        constructionProperties: ConstructionProperties,
+        uncompletedProperties: UncompletedProperties,
+        buildingProperties: BuildingProperties,
+        zoneProperties: ZoneProperties,
+        boundProperties: BoundProperties
     };
 };

@@ -44,23 +44,39 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
         // проверка на окружность
         if ((partOfMultu === undefined) &&
                 (SpatialElement.SpelementUnit.R !== undefined)) {
-            console.log('Circle found');
+            //console.log('Circle found');
             return {
                 'R': Number(SpatialElement.SpelementUnit.R),
                 'X': Number(SpatialElement.SpelementUnit.Ordinate.Y),
                 'Y': Number(SpatialElement.SpelementUnit.Ordinate.X)
             };
         } else {
-            for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
-                var point = SpatialElement.SpelementUnit[j];
-                var xy = [];
-                xs.push(parseFloat(point.Ordinate.Y));
-                ys.push(parseFloat(point.Ordinate.X));
-                xy.push(parseFloat(point.Ordinate.Y));
-                xy.push(parseFloat(point.Ordinate.X));
-                contour.push(xy);
+            var firstPoint = SpatialElement.SpelementUnit[0];
+            var lastPoint = SpatialElement.SpelementUnit[SpatialElement.SpelementUnit.length-1];
+            if (firstPoint.SuNmb === lastPoint.SuNmb) {
+                LineString = false;
+                for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
+                    var point = SpatialElement.SpelementUnit[j];
+                    var xy = [];
+                    xs.push(parseFloat(point.Ordinate.Y));
+                    ys.push(parseFloat(point.Ordinate.X));
+                    xy.push(parseFloat(point.Ordinate.Y));
+                    xy.push(parseFloat(point.Ordinate.X));
+                    contour.push(xy);
+                }
+                Area = polygonArea(xs, ys, xs.length);
+            } else {
+                LineString = true;
+                for (var j = 0; j < SpatialElement.SpelementUnit.length-1; j++) {
+                    var point = SpatialElement.SpelementUnit[j];
+                    var xy = [];
+                    xs.push(parseFloat(point.Ordinate.Y));
+                    ys.push(parseFloat(point.Ordinate.X));
+                    xy.push(parseFloat(point.Ordinate.Y));
+                    xy.push(parseFloat(point.Ordinate.X));
+                    contour.push(xy);
+                }
             }
-            Area = polygonArea(xs, ys, xs.length);
             //console.log(Area);
             return contour;
         }
@@ -108,6 +124,12 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
                         }
                     };
                 }
+            } // Полилиня лоя ОКС
+            else if ((partOfMultu === undefined) && (LineString)) {
+                return {
+                    "type": "MultiLineString",
+                    "coordinates": cntrs
+                };
             }
             // Если это для простого объекта, то возвращем объект geometry
             else {
@@ -125,18 +147,22 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
             if (partOfMultu) {
                 return cntrs;
             }
-            // для ОКС. Только один контур
-            else if (partOfMultu === undefined) {
-                if (cntrs[0].R) {
-                    return {
-                        "type": "Circle",
-                        "coordinates": [cntrs[0].X, cntrs[0].Y],
-                        "radius": cntrs[0].R,
-                        "properties": {
-                            "radius_units": "m"
-                        }
-                    };
-                }
+            // для ОКС. Окружность
+            else if ((partOfMultu === undefined) && (cntrs[0].R)) {
+                return {
+                    "type": "Circle",
+                    "coordinates": [cntrs[0].X, cntrs[0].Y],
+                    "radius": cntrs[0].R,
+                    "properties": {
+                        "radius_units": "m"
+                    } 
+                };
+            } // Полилиня лоя ОКС
+            else if ((partOfMultu === undefined) && (LineString)) {
+                return {
+                    "type": "LineString",
+                    "coordinates": cntrs[0]
+                };
             }
             // Если это для простого объекта, то возвращем объект geometry
             else {
