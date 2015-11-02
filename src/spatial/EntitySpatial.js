@@ -44,11 +44,11 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
         // проверка на окружность
         if ((partOfMultu === undefined) &&
                 (SpatialElement.SpelementUnit.R !== undefined)) {
-            console.log('Circle');
+            console.log('Circle found');
             return {
-                'R': SpatialElement.SpelementUnit.R,
-                'X': SpatialElement.SpelementUnit.Ordinate.Y,
-                'Y': SpatialElement.SpelementUnit.Ordinate.X
+                'R': Number(SpatialElement.SpelementUnit.R),
+                'X': Number(SpatialElement.SpelementUnit.Ordinate.Y),
+                'Y': Number(SpatialElement.SpelementUnit.Ordinate.X)
             };
         } else {
             for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
@@ -95,6 +95,19 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
             // Если это для многоконтурного объекта, то возвращем массив контуров
             if (partOfMultu) {
                 return cntrs;
+            }
+            // для ОКС. Только один контур
+            else if (partOfMultu === undefined) {
+                if (cntrs[0].R) {
+                    return {
+                        "type": "Circle",
+                        "coordinates": [cntrs[0].X, cntrs[0].Y],
+                        "radius": cntrs[0].R,
+                        "properties": {
+                            "radius_units": "m"
+                        }
+                    };
+                }
             }
             // Если это для простого объекта, то возвращем объект geometry
             else {

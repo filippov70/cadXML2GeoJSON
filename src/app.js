@@ -43,8 +43,12 @@ function StartParse() {
                     color: '#a3bdc8'
                 });
                 var realtylFill = new ol.style.Fill({
-                    color: 'red'
+                    color: '#FF0000'
                 });
+//                var realtylCircle = new ol.style.Circle({
+//                    radius: 5,
+//                    fill: '#FF0000'
+//                });
 
                 var stroke = new ol.style.Stroke({
                     color: '#313030',
@@ -55,7 +59,7 @@ function StartParse() {
                     width: 1
                 });
                 var zoneStroke = new ol.style.Stroke({
-                    color: '#ee6a50',
+                    color: '#143388',
                     width: 1
                 });
                 var quartalStroke = new ol.style.Stroke({
@@ -107,46 +111,44 @@ function StartParse() {
                     opacity: 0.5
                 });
                 var parcelLayer = new ol.layer.Vector({
+                    title: 'ЗУ',
                     source: parcelSource,
                     style: parcelStyle,
                     opacity: 0.5
                 });
                 var realtyLayer = new ol.layer.Vector({
+                    title: 'ОКС',
                     source: realtySource,
                     style: realtyStyle
                 });
                 var boundLayer = new ol.layer.Vector({
+                    title: 'Границы',
                     source: boundSource,
                     style: boundStyle,
                     opacity: 0.5
                 });
                 var zoneLayer = new ol.layer.Vector({
+                    title: 'Зоны',
                     source: zoneSource,
                     style: zoneStyle,
                     opacity: 0.5
                 });
 
                 var format = new ol.format.GeoJSON();
-//                var parcels = parsedData.geoJSONParcels;
-//                for (i = 0; i < parcels.features.length; i++) {
-//                    var geometryObj = format.readGeometry(parcels.features[i].geometry);
-//                    var feature = new ol.Feature({
-//                        geometry: geometryObj//,
-//                                //propA : parsedData.features[i].properties.cadnumber
-//                    });
-//                    parcelLayer.getSource().addFeature(feature);
-//                }
-                var realtys = parsedData.geoJSONRealtyCircle;
+
+                var realtysCircle = parsedData.geoJSONRealtyCircle;
+
                 // vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
-                for (i = 0; i < realtys.features.length; i++) {
-                    console.log(realtys.features[i]);
+                for (var i = 0; i < realtysCircle.features.length; i++) {
+                    console.log(realtysCircle.features[i]);
                     realtyLayer.getSource().addFeature(
                             new ol.Feature(new ol.geom.Circle(
-                            [realtys.features[i].geometry.coordinates[0], realtys.features[i].geometry.coordinates[1]], 
-                    realtys.features[i].geometry.radius)));
+                                    [realtysCircle.features[i].geometry.coordinates[0],
+                                    realtysCircle.features[i].geometry.coordinates[1]],
+                                    realtysCircle.features[i].geometry.radius)));
                 }
                 var zones = parsedData.geoJSONZones;
-                for (i = 0; i < zones.features.length; i++) {
+                for (var i = 0; i < zones.features.length; i++) {
                     var geometryObj = format.readGeometry(zones.features[i].geometry);
                     var feature = new ol.Feature({
                         geometry: geometryObj//,
@@ -155,7 +157,7 @@ function StartParse() {
                     zoneLayer.getSource().addFeature(feature);
                 }
                 var quartal = parsedData.geoJSONQuartal;
-                for (i = 0; i < quartal.features.length; i++) {
+                for (var i = 0; i < quartal.features.length; i++) {
                     var geometryObj = format.readGeometry(quartal.features[i].geometry);
                     var feature = new ol.Feature({
                         geometry: geometryObj//,
@@ -164,7 +166,7 @@ function StartParse() {
                     quartalLayer.getSource().addFeature(feature);
                 }
                 var bounds = parsedData.geoJSONBounds;
-                for (i = 0; i < bounds.features.length; i++) {
+                for (var i = 0; i < bounds.features.length; i++) {
                     var geometryObj = format.readGeometry(bounds.features[i].geometry);
                     var feature = new ol.Feature({
                         geometry: geometryObj//,
@@ -203,6 +205,10 @@ function StartParse() {
                     })
                 });
                 map.getView().fit(quartalLayer.getSource().getExtent(), map.getSize());
+                var layerSwitcher = new ol.control.LayerSwitcher({
+                    tipLabel: 'Слои' // Optional label for button
+                });
+                map.addControl(layerSwitcher);
 
                 map.on('singleclick', function (evt) {
                     var features = [];
@@ -227,16 +233,16 @@ function StartParse() {
                     var name = '';
                     for (var i = 0; i < features.length; i++) {
                         var f = features[i];
-                        if (f.get('cadastreNumber')!== undefined) {
+                        if (f.get('cadastreNumber') !== undefined) {
                             cn = f.get('cadastreNumber');
                         }
-                        if (f.get('State')!== undefined) {
+                        if (f.get('State') !== undefined) {
                             st = f.get('State');
                         }
-                        if (f.get('Name')!== undefined) {
+                        if (f.get('Name') !== undefined) {
                             name = f.get('Name');
                         }
-                        if (f.get('Category')!== undefined) {
+                        if (f.get('Category') !== undefined) {
                             cat = f.get('Category');
                         }
                         //console.log(features[i].getProperties());
@@ -245,9 +251,9 @@ function StartParse() {
                             coordinate, 'EPSG:3857', 'EPSG:4326'));
 
                     content.innerHTML = '<p>Кадастровый номер:<code>' + cn +
-                            '</code></p><p>Объект:<code>' + name +'</code></p>'+
-                            '</code><p>Статус:<code>' + st +'</code></p>'+
-                            '</code><p>Категория земель:<code>' + cat +'</code></p>';
+                            '</code></p><p>Объект:<code>' + name + '</code></p>' +
+                            '</code><p>Статус:<code>' + st + '</code></p>' +
+                            '</code><p>Категория земель:<code>' + cat + '</code></p>';
                     overlay.setPosition(coordinate);
                 }
             });
