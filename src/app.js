@@ -6,6 +6,7 @@
 
 var Converter = require('./cadXML2GeoJSON.js');
 var map;
+
 StartParse();
 
 function StartParse() {
@@ -31,7 +32,7 @@ function StartParse() {
     // https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
-    $.get('./testdata/doc8500717.xml', function (xml) {
+    $.get('./testdata/doc1718515.xml', function (xml) {
         //var json = $.xml2json(xml).CadastralBlocks;
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
         //console.log(Converter.GeoJSON);
@@ -87,19 +88,21 @@ function StartParse() {
 
 
                 var quartalSource = new ol.source.Vector({
-                    //projection: 'EPSG:3857'
+                    projection: 'EPSG:4326'
                 });
                 var parcelSource = new ol.source.Vector({
-                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONParcels)
+                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONParcels),
+                    projection: 'EPSG:4326'
                 });
                 var realtySource = new ol.source.Vector({
-                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealty)
+                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealty),
+                    projection: 'EPSG:4326'
                 });
                 var boundSource = new ol.source.Vector({
-                    //projection: 'EPSG:3857'
+                    projection: 'EPSG:4326'
                 });
                 var zoneSource = new ol.source.Vector({
-                    //projection: 'EPSG:3857'
+                    projection: 'EPSG:4326'
                 });
                 var quartalLayer = new ol.layer.Vector({
                     source: quartalSource,
@@ -141,7 +144,7 @@ function StartParse() {
                     realtyLayer.getSource().addFeature(
                             new ol.Feature(new ol.geom.Circle(
                                     [realtysCircle.features[i].geometry.coordinates[0],
-                                    realtysCircle.features[i].geometry.coordinates[1]],
+                                        realtysCircle.features[i].geometry.coordinates[1]],
                                     realtysCircle.features[i].geometry.radius)));
                 }
                 var zones = parsedData.geoJSONZones;
@@ -185,18 +188,21 @@ function StartParse() {
 //                        vectorLayer.getSource().addFeature(feature);
 //                    }
 //                }
-
+                
                 map = new ol.Map({
                     target: 'map',
                     layers: [
-//                        new ol.layer.Tile({
-//                            source: new ol.source.OSM()
-//                        }),
+                        new ol.layer.Tile({
+                            source: new ol.source.OSM(),
+                            opacity: 0.5,
+                            title: 'Подложка'
+                        }),
                         quartalLayer, boundLayer, zoneLayer,
                         parcelLayer, realtyLayer
                     ],
                     overlays: [overlay],
                     view: new ol.View({
+                        projection: 'EPSG:3857',
                         center: [0, 0],
                         zoom: 7
                     })
@@ -206,7 +212,9 @@ function StartParse() {
                     tipLabel: 'Слои' // Optional label for button
                 });
                 map.addControl(layerSwitcher);
-
+//                var graticule = new ol.Graticule({
+//                    map: map
+//                });
                 map.on('singleclick', function (evt) {
                     var features = [];
                     var coordinate = evt.coordinate;

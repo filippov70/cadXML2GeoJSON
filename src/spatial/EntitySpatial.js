@@ -14,7 +14,7 @@
 //  }
 
 
-module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
+module.exports.getEntitySpatial = function (EntitySpatialObj, proj, partOfMultu) {
 
 //	this.geometry = {
 //        type: '',
@@ -35,20 +35,29 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
         }
         return Math.abs(area / 2);
     }
-
+    
+    function convertCoord(coord) {
+        // global
+        return proj4(proj["МСК_70_зона_4"], 'EPSG:3857', coord);
+    }
+    
     // Создание одного замкнутого контура
     function createContour(SpatialElement) {
         var xs = [];
         var ys = [];
         var contour = [];
+        var coord;
+        var reprojected;
         // проверка на окружность
         if ((partOfMultu === undefined) &&
                 (SpatialElement.SpelementUnit.R !== undefined)) {
-            //console.log('Circle found');
+            coord = [SpatialElement.SpelementUnit.Ordinate.Y, SpatialElement.SpelementUnit.Ordinate.X];
+            reprojected = convertCoord(coord);
             return {
+                
                 'R': Number(SpatialElement.SpelementUnit.R),
-                'X': Number(SpatialElement.SpelementUnit.Ordinate.Y),
-                'Y': Number(SpatialElement.SpelementUnit.Ordinate.X)
+                'X': Number(reprojected[0]),
+                'Y': Number(reprojected[1])
             };
         } else {
             var firstPoint = SpatialElement.SpelementUnit[0];
@@ -60,8 +69,10 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
                     var xy = [];
                     xs.push(parseFloat(point.Ordinate.Y));
                     ys.push(parseFloat(point.Ordinate.X));
-                    xy.push(parseFloat(point.Ordinate.Y));
-                    xy.push(parseFloat(point.Ordinate.X));
+                    coord = [parseFloat(point.Ordinate.Y), parseFloat(point.Ordinate.X)];
+                    reprojected = convertCoord(coord);
+                    xy.push(reprojected[0]);
+                    xy.push(reprojected[1]);
                     contour.push(xy);
                 }
                 Area = polygonArea(xs, ys, xs.length);
@@ -72,8 +83,10 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, partOfMultu) {
                     var xy = [];
                     xs.push(parseFloat(point.Ordinate.Y));
                     ys.push(parseFloat(point.Ordinate.X));
-                    xy.push(parseFloat(point.Ordinate.Y));
-                    xy.push(parseFloat(point.Ordinate.X));
+                    coord = [parseFloat(point.Ordinate.Y), parseFloat(point.Ordinate.X)];
+                    reprojected = convertCoord(coord);
+                    xy.push(reprojected[0]);
+                    xy.push(reprojected[1]);
                     contour.push(xy);
                 }
             }
