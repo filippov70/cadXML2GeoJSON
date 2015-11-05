@@ -41,11 +41,14 @@ function StartParse() {
             function () {
                 // http://www.color-hex.com/
                 var parcelFill = new ol.style.Fill({
-                    color: '#a3bdc8'
+                    color: '#bbf144'
+                });
+                var zoneFill = new ol.style.Fill({
+                    color: '#009fff'
                 });
                 var realtylStroke = new ol.style.Stroke({
-                    color: '#FF0000',
-                    width: .6
+                    color: '#FF00C1',
+                    width: 1.2
                 });
 
                 var stroke = new ol.style.Stroke({
@@ -83,6 +86,7 @@ function StartParse() {
                     stroke: boundStroke
                 });
                 var zoneStyle = new ol.style.Style({
+                    fill: zoneFill,
                     stroke: zoneStroke
                 });
 
@@ -105,6 +109,7 @@ function StartParse() {
                     projection: 'EPSG:4326'
                 });
                 var quartalLayer = new ol.layer.Vector({
+                    title: 'Квартал',
                     source: quartalSource,
                     style: quartalStyle,
                     opacity: 0.5
@@ -188,14 +193,21 @@ function StartParse() {
 //                        vectorLayer.getSource().addFeature(feature);
 //                    }
 //                }
-                
+
                 map = new ol.Map({
                     target: 'map',
                     layers: [
                         new ol.layer.Tile({
                             source: new ol.source.OSM(),
                             opacity: 0.5,
+                            visible: false,
                             title: 'Подложка'
+                        }),
+                        new ol.layer.Tile({
+                            title: 'ПКК',
+                            source: new ol.source.TileArcGISRest({
+                                url: 'http://maps.rosreestr.ru/arcgis/rest/services/Cadastre/Cadastre/MapServer/'
+                            })
                         }),
                         quartalLayer, boundLayer, zoneLayer,
                         parcelLayer, realtyLayer
