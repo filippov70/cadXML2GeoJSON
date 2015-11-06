@@ -180,20 +180,6 @@ function StartParse() {
                     boundLayer.getSource().addFeature(feature);
                 }
 
-                //$("#txt").jJsonViewer(parsedData);
-//                for (var key in parsedData) {
-//                    console.log('Создано объектов ' + key + ': ' + parsedData[key].features.length);
-//                    for (i = 0; i < parsedData[key].features.length; i++) {
-//                        var geometryObj = format
-//                                .readGeometry(parsedData[key].features[i].geometry);
-//                        var feature = new ol.Feature({
-//                            geometry: geometryObj//,
-//                                    //propA : parsedData.features[i].properties.cadnumber
-//                        });
-//                        vectorLayer.getSource().addFeature(feature);
-//                    }
-//                }
-
                 map = new ol.Map({
                     target: 'map',
                     layers: [
@@ -244,34 +230,43 @@ function StartParse() {
                 });
 
                 function createInfoContetnt(features, coordinate) {
-                    var cn = '';
-                    var st = '';
-                    var cat = '';
-                    var name = '';
+                    var contenInfo = '';
+//                    var st = '';
+//                    var cat = '';
+//                    var name = '';
+//                    var ut = '';
                     for (var i = 0; i < features.length; i++) {
-                        var f = features[i];
-                        if (f.get('cadastreNumber') !== undefined) {
-                            cn = f.get('cadastreNumber');
-                        }
-                        if (f.get('State') !== undefined) {
-                            st = f.get('State');
-                        }
-                        if (f.get('Name') !== undefined) {
-                            name = f.get('Name');
-                        }
-                        if (f.get('Category') !== undefined) {
-                            cat = f.get('Category');
-                        }
-                        //console.log(features[i].getProperties());
+//                        var f = features[i];
+//                        if (f.get('cadastreNumber') !== undefined) {
+//                            cn = f.get('cadastreNumber');
+//                        }
+//                        if (f.get('State') !== undefined) {
+//                            st = f.get('State');
+//                        }
+//                        if (f.get('Name') !== undefined) {
+//                            name = f.get('Name');
+//                        }
+//                        if (f.get('Category') !== undefined) {
+//                            cat = f.get('Category');
+//                        }
+//                        if (f.get('Category') !== undefined) {
+//                            cat = f.get('Category');
+//                        }
+                        console.log(features[i].getProperties());
+//                    }
+//                    var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+//                            coordinate, 'EPSG:3857', 'EPSG:4326'));
+//                        var json = JSON.stringify(features[i].getProperties());
+//                        contenInfo += '<p>' + $('').jJsonViewer(json) + '</p>';
+                        
+//                    content.innerHTML = '<p>Кадастровый номер:<code>' + cn +
+//                            '</code></p><p>Объект:<code>' + name + '</code></p>' +
+//                            '</code><p>Статус:<code>' + st + '</code></p>' +
+//                            '</code><p>Категория земель:<code>' + cat + '</code></p>';
+                        //content.jJsonViewer(features[i].getProperties()); 
                     }
-                    var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-                            coordinate, 'EPSG:3857', 'EPSG:4326'));
-
-                    content.innerHTML = '<p>Кадастровый номер:<code>' + cn +
-                            '</code></p><p>Объект:<code>' + name + '</code></p>' +
-                            '</code><p>Статус:<code>' + st + '</code></p>' +
-                            '</code><p>Категория земель:<code>' + cat + '</code></p>';
-                    overlay.setPosition(coordinate);
+//                    content.innerHTML = contenInfo;
+//                    overlay.setPosition(coordinate);
                 }
             });
 

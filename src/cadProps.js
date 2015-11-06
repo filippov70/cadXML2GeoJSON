@@ -69,7 +69,7 @@ var dEncumbrances = {
 	'022011000000': 'Рента',
 	'022012000000': 'Запрет на совершение действий в сфере ГКУ в отношении ОН',
 	'022099000000': 'Иные ограничения (обременения) прав'
-}
+};
 // Единицы измерений
 var dUnits = {
 	'003': 'Миллиметр',
@@ -805,25 +805,29 @@ module.exports.getProperties = function (Feature, FeatureType) {
         case 'Parcel' :
         {
             ParcelProperties = {
-                cadastreNumber: '', // require
-                State: '01', // dStates require
-                DateCreated: '',
-                Name: '', //dParcels require
-                Category: '', // dCategories // require
-                Area: {// requre
-                    Area: 0, // require
-                    Unit: '', //dUnit require
-                    Inaccuracy: '' // d20_2
+                "Кадастровый номер": '', // require
+                "Статус": '01', // dStates require
+                "Дата создания": '',
+                "Тип объекта": '', //dParcels require
+                "Категория земель": '', // dCategories // require
+                "Площадь": {// requre
+                    "Значение": 0, // require
+                    "ед.изм": '', //dUnit require
+                    "Точность": '' // d20_2
                 },
-                Utilization: {// require
-                    ByDoc: '',
-                    Utilization: '' // dUtilization require
+                "Разрешённое использование": {// require
+                    "по документу": '',
+                    "по справочнику": '' // dUtilization require
                 }
             };
-            ParcelProperties.cadastreNumber = Feature.CadastralNumber;
-            ParcelProperties.State = getValueFromDict(Feature.State, dStates);
-            ParcelProperties.Name = getValueFromDict(Feature.Name, dParcels);
-            ParcelProperties.Category = getValueFromDict(Feature.Category, dCategories);
+            ParcelProperties["Кадастровый номер"] = Feature.CadastralNumber;
+            ParcelProperties["Статус"] = getValueFromDict(Feature.State, dStates);
+            ParcelProperties["Тип объекта"] = getValueFromDict(Feature.Name, dParcels);
+            ParcelProperties["Категория земель"] = getValueFromDict(Feature.Category, dCategories);
+            ParcelProperties["Дата создания"] = Feature.DateCreated;
+            ParcelProperties["Разрешённое использование"]["по справочнику"] = 
+                    getValueFromDict(Feature.Utilization.Utilization, dUtilizations);
+            ParcelProperties["Разрешённое использование"]["по документу"] = Feature.Utilization.ByDoc;
             break;
         }
         case 'Construction':{
