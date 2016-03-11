@@ -33,7 +33,7 @@ function StartParse() {
     // https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
-    $.get('./testdata/doc1718515.xml', function (xml) {
+    $.get('./testdata/doc2153522.xml', function (xml) {
         //var json = $.xml2json(xml).CadastralBlocks;
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
         //console.log(Converter.GeoJSON);
@@ -1154,7 +1154,8 @@ var ES = require('./spatial/EntitySpatial.js');
 var Props = require('./cadProps');
 
 var projMSK = {
-    'МСК_70_зона_4': '+proj=tmerc +lat_0=0 +lon_0=83.73333333333 +k=1 +x_0=4250000 +y_0=-5912900.566 +ellps=krass +towgs84=23.57,-140.95,-79.8,0,0.35,0.79,-0.22 +units=m +no_defs'
+    'МСК_70_зона_4': '+proj=tmerc +lat_0=0 +lon_0=83.73333333333 +k=1 +x_0=4250000 +y_0=-5912900.566 +ellps=krass +towgs84=23.57,-140.95,-79.8,0,0.35,0.79,-0.22 +units=m +no_defs',
+    'МСК_70_зона_2': '+proj=tmerc +lat_0=0 +lon_0=77.73333333333 +k=1 +x_0=2250000 +y_0=-5912900.566 +ellps=krass +towgs84=23.57,-140.95,-79.8,0,0.35,0.79,-0.22 +units=m +no_defs'
 };
 
 module.exports.GeoJSON = function (xmlData) {
@@ -1460,7 +1461,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, partOfMultu)
     
     function convertCoord(coord) {
         // global
-        return proj4(proj["МСК_70_зона_4"], 'EPSG:3857', coord);
+        return proj4(proj["МСК_70_зона_2"], 'EPSG:3857', coord);
     }
     
     // Создание одного замкнутого контура
