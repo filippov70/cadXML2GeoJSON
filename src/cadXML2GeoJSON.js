@@ -2,7 +2,9 @@ var ES = require('./spatial/EntitySpatial.js');
 var Props = require('./cadProps');
 
 var projMSK = {
-    'МСК_70_зона_4': '+proj=tmerc +lat_0=0 +lon_0=83.73333333333 +k=1 +x_0=4250000 +y_0=-5912900.566 +ellps=krass +towgs84=23.57,-140.95,-79.8,0,0.35,0.79,-0.22 +units=m +no_defs'
+    'МСК_70_зона_4': '+proj=tmerc +lat_0=0 +lon_0=83.73333333333 +k=1 +x_0=4250000 +y_0=-5912900.566 +ellps=krass +towgs84=23.57,-140.95,-79.8,0,0.35,0.79,-0.22 +units=m +no_defs',
+    'МСК_70_зона_2': '+proj=tmerc +lat_0=0 +lon_0=77.73333333333 +k=1 +x_0=2250000 +y_0=-5912900.566 +ellps=krass +towgs84=23.57,-140.95,-79.8,0,0.35,0.79,-0.22 +units=m +no_defs'
+
 };
 
 module.exports.GeoJSON = function (xmlData) {

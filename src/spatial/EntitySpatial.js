@@ -38,7 +38,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, partOfMultu)
     
     function convertCoord(coord) {
         // global
-        return proj4(proj["МСК_70_зона_4"], 'EPSG:3857', coord);
+        return proj4(proj["МСК_70_зона_2"], 'EPSG:3857', coord);
     }
     
     // Создание одного замкнутого контура
