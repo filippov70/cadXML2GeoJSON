@@ -835,7 +835,7 @@ module.exports.getProperties = function (Feature, FeatureType) {
                 cadastreNumber: '', // 
                 ObjectType: '', // require
                 AssignationName: ''
-            }
+            };
             if (Feature.CadastralNumber) {
                 ConstructionProperties.cadastreNumber = Feature.CadastralNumber;
             } else {
@@ -844,21 +844,39 @@ module.exports.getProperties = function (Feature, FeatureType) {
             
             ConstructionProperties.AssignationName = Feature.AssignationName;
             ConstructionProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            break;
         }
         case 'Building':{
-            ConstructionProperties = {
+            BuildingProperties = {
                 cadastreNumber: '', // 
                 ObjectType: '', // require
                 AssignationName: ''
-            }
+            };
             if (Feature.CadastralNumber) {
-                ConstructionProperties.cadastreNumber = Feature.CadastralNumber;
+                BuildingProperties.cadastreNumber = Feature.CadastralNumber;
             } else {
-                ConstructionProperties.cadastreNumber = '';
+                BuildingProperties.cadastreNumber = '';
             }
             
-            ConstructionProperties.AssignationName = Feature.AssignationName;
-            ConstructionProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            BuildingProperties.AssignationName = Feature.AssignationName;
+            BuildingProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            break;
+        }
+        case 'Uncompleted':{
+            UncompletedProperties = {
+                cadastreNumber: '', // 
+                ObjectType: '', // require
+                AssignationName: ''
+            };
+            if (Feature.CadastralNumber) {
+                UncompletedProperties.cadastreNumber = Feature.CadastralNumber;
+            } else {
+                UncompletedProperties.cadastreNumber = '';
+            }
+            
+            UncompletedProperties.AssignationName = Feature.AssignationName;
+            UncompletedProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            break;
         }
         default :{
                 console.log('Тип объекта не распознан');

@@ -11,8 +11,8 @@ module.exports = function (grunt) {
                         debug: true
                     }
                 },
-                src: 'src/cadXML2GeoJSON.js',//'src/cadXML2GeoJSON',
-                dest: 'dist/cadXML2GeoJSON.js'
+                src: 'src/app.js',//'src/cadXML2GeoJSON',
+                dest: 'dist/app.js'
             }
         }
 //        ,

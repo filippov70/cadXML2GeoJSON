@@ -23,21 +23,21 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         type: "FeatureCollection",
         features: []
     };
-    // В GeoJSON нет окружностей и обрабатывать стандартными парсерами нельзя
-    var geoJSONRealtyCircle = {
-        type: "CircleCollection",
+    // Отдельное хранилище для GeometryCollection
+    var geoJSONRealtyCollection = {
+        type: "FeatureCollection",
         features: []
     };
     var geoJSONOSMPoints = {
         type: "FeatureCollection",
         features: []
     };
-    
+
     var _reproject = reproject || null;
-    
+
     var AllData = $.xml2json(xmlData).CadastralBlocks.CadastralBlock;
     //console.log(AllData);
-    
+
     // Может быть несколько СК
     var projMSK;
     if (_reproject !== null) {
@@ -46,7 +46,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
 
     // Обработка квартала. Не может быть многоконтурным           
     if (AllData.SpatialData !== null) {
-        var spObj = ES.getEntitySpatial(AllData.SpatialData.EntitySpatial, projMSK, false);
+        var spObj = ES.getEntitySpatial(AllData.SpatialData.EntitySpatial, projMSK, 'Quartal', false);
         if ((spObj === undefined) || (spObj.length === 0)) {
             console.log('Объект квартала с пустой геометрией! Объект будет пропущен.');
         }
@@ -74,7 +74,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                             'type': 'Feature'
                         };
                         if (AllData.Bounds.Bound[i].Boundaries.Boundary[k].EntitySpatial !== null) {
-                            var spObj = ES.getEntitySpatial(AllData.Bounds.Bound[i].Boundaries.Boundary[k].EntitySpatial, projMSK, false);
+                            var spObj = ES.getEntitySpatial(AllData.Bounds.Bound[i].Boundaries.Boundary[k].EntitySpatial, projMSK, 'Bound', false);
                             if ((spObj === undefined) || (spObj.length === 0)) {
                                 console.log('Объект Границы с пустой геометрией! Объект будет пропущен.');
                                 continue;
@@ -92,7 +92,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                     var feature = {
                         'type': 'Feature'
                     };
-                    var spObj = ES.getEntitySpatial(AllData.Bounds.Bound[i].Boundaries.Boundary.EntitySpatial, projMSK, false);
+                    var spObj = ES.getEntitySpatial(AllData.Bounds.Bound[i].Boundaries.Boundary.EntitySpatial, projMSK, 'Bound', false);
                     if ((spObj === undefined) || (spObj.length === 0)) {
                         console.log('Объект Границы с пустой геометрией! Объект будет пропущен.');
                         continue;
@@ -104,7 +104,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                 }
             }
         } else {
-            var spObj = ES.getEntitySpatial(AllData.Bounds.Bound.Boundaries.Boundary.EntitySpatial, projMSK, false);
+            var spObj = ES.getEntitySpatial(AllData.Bounds.Bound.Boundaries.Boundary.EntitySpatial, projMSK, 'Bound', false);
             if ((spObj === undefined) || (spObj.length === 0)) {
                 console.log('Объект Границы с пустой геометрией! Объект будет пропущен.');
             }
@@ -124,7 +124,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                     'type': 'Feature'
                 };
                 if (AllData.Zones.Zone[i].EntitySpatial !== null) {
-                    var spObj = ES.getEntitySpatial(AllData.Zones.Zone[i].EntitySpatial, projMSK, false);
+                    var spObj = ES.getEntitySpatial(AllData.Zones.Zone[i].EntitySpatial, projMSK, 'Zone', false);
                     if ((spObj === undefined) || (spObj.length === 0)) {
                         console.log('Объект Зоны с пустой геометрией! Объект будет пропущен.');
                         continue;
@@ -142,7 +142,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                 var feature = {
                     'type': 'Feature'
                 };
-                var spObj = ES.getEntitySpatial(AllData.Zones.Zone.EntitySpatial, projMSK, false);
+                var spObj = ES.getEntitySpatial(AllData.Zones.Zone.EntitySpatial, projMSK, 'Zone', false);
                 if ((spObj === undefined) || (spObj.length === 0)) {
                     console.log('Объект Зоны с пустой геометрией! Объект будет пропущен.');
                 }
@@ -162,7 +162,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
             'type': 'Feature'
         };
         if (AllData.Parcels.Parcel[e].EntitySpatial !== undefined) {
-            spObj = ES.getEntitySpatial(AllData.Parcels.Parcel[e].EntitySpatial, projMSK, false);
+            spObj = ES.getEntitySpatial(AllData.Parcels.Parcel[e].EntitySpatial, projMSK, 'Parcel', false);
             if ((spObj === undefined) || (spObj.length === 0)) {
                 continue;
             }
@@ -174,7 +174,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
             var multiPolygon = [];
             for (var c = 0; c < Contours.length; c++) {
                 var es = Contours[c].EntitySpatial;
-                var p = ES.getEntitySpatial(es, projMSK, true);
+                var p = ES.getEntitySpatial(es, projMSK, 'Parcel', true);
                 if (p) {
                     multiPolygon.push(p);
                 }
@@ -200,20 +200,22 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         }
 
     }
-    // Обработка строений. Не могут быть многоконтурными
+    // Обработка строений. могут быть составные из разных геометрий
     if (AllData.ObjectsRealty.ObjectRealty) {
         if (AllData.ObjectsRealty.ObjectRealty.splice) {
 
-            function processES(EntitySpatial) {
-                var spObj = ES.getEntitySpatial(EntitySpatial, projMSK);
+            function processES(EntitySpatial, oType) {
+                var spObj = ES.getEntitySpatial(EntitySpatial, projMSK, oType, false);
                 if (spObj) {
                     feature.geometry = spObj;
-                    if (spObj.type === 'Circle') {
-                        geoJSONRealtyCircle.features.push(feature);
-                        console.log('Добавлен geoJSONRealtyCircle');
+                    if (spObj.type === 'GeometryCollection') {
+                        geoJSONRealtyCollection.features.push(feature);
+                        console.log('Добавлен geoJSONRealtyGeometryCollection');
+                        console.log(spObj.geometries);
                     } else {
                         geoJSONRealty.features.push(feature);
                         console.log('Добавлен geoJSONRealty. Type ' + spObj.type);
+                        console.log(spObj.coordinates);
                     }
                 } else {
                     console.log('ОКС с пустой геометрией! Объект будет пропущен.');
@@ -232,8 +234,9 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Building, 'Building');
                         if (props) {
                             feature.properties = props.buildingProperties;
+                            console.log(props.buildingProperties);
                         }
-                        processES(AllData.ObjectsRealty.ObjectRealty[i].Building.EntitySpatial);
+                        processES(AllData.ObjectsRealty.ObjectRealty[i].Building.EntitySpatial, 'Building');
                     }
                 }
                 // объекты незавершённого строительства
@@ -242,8 +245,9 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted, 'Uncompleted');
                         if (props) {
                             feature.properties = props.uncompletedProperties;
+                            console.log(props.uncompletedProperties);
                         }
-                        processES(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted.EntitySpatial);
+                        processES(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted.EntitySpatial, 'Uncompleted');
                     }
                 }
                 // сооружения
@@ -252,8 +256,9 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Construction, 'Construction');
                         if (props) {
                             feature.properties = props.constructionProperties;
+                            console.log(props.constructionProperties);
                         }
-                        processES(AllData.ObjectsRealty.ObjectRealty[i].Construction.EntitySpatial);
+                        processES(AllData.ObjectsRealty.ObjectRealty[i].Construction.EntitySpatial, 'Construction');
                     }
                 }
             }
@@ -263,10 +268,10 @@ module.exports.GeoJSON = function (xmlData, reproject) {
 
     return {
         geoJSONQuartal: geoJSONQuartal,
-        geoJSONBounds: geoJSONBounds, 
+        geoJSONBounds: geoJSONBounds,
         geoJSONZones: geoJSONZones,
         geoJSONParcels: geoJSONParcels,
         geoJSONRealty: geoJSONRealty,
-        geoJSONRealtyCircle: geoJSONRealtyCircle
+        geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
     };
 };

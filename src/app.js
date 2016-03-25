@@ -92,27 +92,31 @@ function StartParse() {
 
 
                 var quartalSource = new ol.source.Vector({
-                    projection: 'EPSG:4326'
+                    projection: 'EPSG:3857'
                 });
                 var parcelSource = new ol.source.Vector({
                     features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONParcels),
-                    projection: 'EPSG:4326'
+                    projection: 'EPSG:3857'
                 });
                 var realtySource = new ol.source.Vector({
                     features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealty),
-                    projection: 'EPSG:4326'
+                    projection: 'EPSG:3857'
+                });
+                var realtyCollectionSource = new ol.source.Vector({
+                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealtyGeometryCollection),
+                    projection: 'EPSG:3857'
                 });
                 var boundSource = new ol.source.Vector({
-                    projection: 'EPSG:4326'
+                    projection: 'EPSG:3857'
                 });
                 var zoneSource = new ol.source.Vector({
-                    projection: 'EPSG:4326'
+                    projection: 'EPSG:3857'
                 });
                 var quartalLayer = new ol.layer.Vector({
                     title: 'Квартал',
                     source: quartalSource,
                     style: quartalStyle,
-                    opacity: 0.5
+                    opacity: 0.54326
                 });
                 var parcelLayer = new ol.layer.Vector({
                     title: 'ЗУ',
@@ -125,7 +129,13 @@ function StartParse() {
                     source: realtySource,
                     style: realtyStyle,
                     opacity: 0.5
-                });
+                }); 
+                var realtyCollectionLayer = new ol.layer.Vector({
+                    title: 'ОКС сложные',
+                    source: realtyCollectionSource,
+                    style: realtyStyle,
+                    opacity: 0.5
+                }); 
                 var boundLayer = new ol.layer.Vector({
                     title: 'Границы',
                     source: boundSource,
@@ -141,16 +151,16 @@ function StartParse() {
 
                 var format = new ol.format.GeoJSON();
 
-                var realtysCircle = parsedData.geoJSONRealtyCircle;
+                var realtysCollection = parsedData.geoJSONRealtyGeometryCollection;
 
-                // vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
-                for (var i = 0; i < realtysCircle.features.length; i++) {
-                    console.log(realtysCircle.features[i]);
-                    realtyLayer.getSource().addFeature(
-                            new ol.Feature(new ol.geom.Circle(
-                                    [realtysCircle.features[i].geometry.coordinates[0],
-                                        realtysCircle.features[i].geometry.coordinates[1]],
-                                    realtysCircle.features[i].geometry.radius)));
+                for (var i = 0; i < realtysCollection.features.length; i++) {
+                    //console.log(realtysCollection.features[i]);
+                    var geometryObj = format.readGeometry(realtysCollection.features[i].geometry);
+                    var feature = new ol.Feature({
+                        geometry: geometryObj//,
+                                //propA : parsedData.features[i].properties.cadnumber
+                    });
+                    realtyCollectionLayer.getSource().addFeature(feature);
                 }
                 var zones = parsedData.geoJSONZones;
                 for (var i = 0; i < zones.features.length; i++) {
@@ -196,7 +206,7 @@ function StartParse() {
                             })
                         }),
                         quartalLayer, boundLayer, zoneLayer,
-                        parcelLayer, realtyLayer
+                        parcelLayer, realtyLayer, realtyCollectionLayer
                     ],
                     overlays: [overlay],
                     view: new ol.View({
