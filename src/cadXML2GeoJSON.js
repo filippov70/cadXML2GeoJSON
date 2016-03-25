@@ -210,12 +210,12 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                     feature.geometry = spObj;
                     if (spObj.type === 'GeometryCollection') {
                         geoJSONRealtyCollection.features.push(feature);
-                        console.log('Добавлен geoJSONRealtyGeometryCollection');
-                        console.log(spObj.geometries);
+                        //console.log('Добавлен geoJSONRealtyGeometryCollection');
+                        //console.log(spObj.geometries);
                     } else {
                         geoJSONRealty.features.push(feature);
-                        console.log('Добавлен geoJSONRealty. Type ' + spObj.type);
-                        console.log(spObj.coordinates);
+                        //console.log('Добавлен geoJSONRealty. Type ' + spObj.type);
+                        //console.log(spObj.coordinates);
                     }
                 } else {
                     console.log('ОКС с пустой геометрией! Объект будет пропущен.');
@@ -234,7 +234,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Building, 'Building');
                         if (props) {
                             feature.properties = props.buildingProperties;
-                            console.log(props.buildingProperties);
+                            //console.log(props.buildingProperties);
                         }
                         processES(AllData.ObjectsRealty.ObjectRealty[i].Building.EntitySpatial, 'Building');
                     }
@@ -245,7 +245,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted, 'Uncompleted');
                         if (props) {
                             feature.properties = props.uncompletedProperties;
-                            console.log(props.uncompletedProperties);
+                            //console.log(props.uncompletedProperties);
                         }
                         processES(AllData.ObjectsRealty.ObjectRealty[i].Uncompleted.EntitySpatial, 'Uncompleted');
                     }
@@ -256,7 +256,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         var props = Props.getProperties(AllData.ObjectsRealty.ObjectRealty[i].Construction, 'Construction');
                         if (props) {
                             feature.properties = props.constructionProperties;
-                            console.log(props.constructionProperties);
+                            //console.log(props.constructionProperties);
                         }
                         processES(AllData.ObjectsRealty.ObjectRealty[i].Construction.EntitySpatial, 'Construction');
                     }

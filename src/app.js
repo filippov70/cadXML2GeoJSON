@@ -196,11 +196,12 @@ function StartParse() {
                         new ol.layer.Tile({
                             source: new ol.source.OSM(),
                             opacity: 0.5,
-                            visible: false,
+                            visible: true,
                             title: 'Подложка'
                         }),
                         new ol.layer.Tile({
                             title: 'ПКК',
+                            visible: false,
                             source: new ol.source.TileArcGISRest({
                                 url: 'http://maps.rosreestr.ru/arcgis/rest/services/Cadastre/Cadastre/MapServer/'
                             })

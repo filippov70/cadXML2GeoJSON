@@ -65,29 +65,28 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
         var ys = [];
         var contour = [];
         var coord;
-        var re_projected;
+        var re_projected = [];
         // проверка на окружность
-        if ((SpatialElement.SpelementUnit.TypeUnit === "Окружность") &&
+        if ((SpatialElement.SpelementUnit.TypeUnit === "Окружность" || "Точка") &&
                 (SpatialElement.SpelementUnit.R !== undefined)) {
             coord = [Number(SpatialElement.SpelementUnit.Ordinate.Y), Number(SpatialElement.SpelementUnit.Ordinate.X)];
             re_projected = convertCoord(coord);
             return {
-                    'R': Number(SpatialElement.SpelementUnit.R),
-                    'X': Number(re_projected[0]),
-                    'Y': Number(re_projected[1])
-                };
+                'R': Number(SpatialElement.SpelementUnit.R),
+                'X': Number(re_projected[0]),
+                'Y': Number(re_projected[1])
+            };
         } else {
-            if (SpatialElement.SpelementUnit.length === 1)
-                return null;
-            var firstPoint = SpatialElement.SpelementUnit[0];
-            var lastPoint = SpatialElement.SpelementUnit[SpatialElement.SpelementUnit.length - 1];
+//            if (SpatialElement.SpelementUnit.length === 1)
+//                return null;
+            var firstPoint = SpatialElement.SpelementUnit[0].Ordinate;
+            var lastPoint = SpatialElement.SpelementUnit[SpatialElement.SpelementUnit.length - 1].Ordinate;
             if ((firstPoint.X === lastPoint.X) && (firstPoint.Y === lastPoint.Y)) {
                 LineString = false;
-                for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
+                //console.log(firstPoint.X, lastPoint.X, firstPoint.Y, lastPoint.Y);
+                for (var j = 0; j < SpatialElement.SpelementUnit.length - 1; j++) {
                     var point = SpatialElement.SpelementUnit[j];
                     var xy = [];
-                    xs.push(Number(point.Ordinate.Y));
-                    ys.push(Number(point.Ordinate.X));
                     coord = [Number(point.Ordinate.Y), Number(point.Ordinate.X)];
                     re_projected = convertCoord(coord);
                     xy.push(Number(re_projected[0]));
@@ -100,8 +99,6 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
                 for (var j = 0; j < SpatialElement.SpelementUnit.length - 1; j++) {
                     var point = SpatialElement.SpelementUnit[j];
                     var xy = [];
-                    xs.push(Number(point.Ordinate.Y));
-                    ys.push(Number(point.Ordinate.X));
                     coord = [Number(point.Ordinate.Y), Number(point.Ordinate.X)];
                     re_projected = convertCoord(coord);
                     xy.push(Number(re_projected[0]));
@@ -187,7 +184,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
             for (var i = 0; i < cntrs.length - 1; i++) {
                 // Окружность
                 if (cntrs[i].R) {
-                    var points = appriximateCircle(cntrs[i].X, cntrs[i].Y, cntrs[i].R);
+                    var points = approximateCircle(cntrs[i].X, cntrs[i].Y, cntrs[i].R);
                     collection.push({
                         "type": "Polygon",
                         "coordinates": [points]
@@ -214,7 +211,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
         } else {
             // Окружность
             if (cntrs[0].R) {
-                var points = appriximateCircle(cntrs[0].X, cntrs[0].Y, cntrs[0].R);
+                var points = approximateCircle(cntrs[0].X, cntrs[0].Y, cntrs[0].R);
                 return {
                     "type": "Polygon",
                     "coordinates": [points]
@@ -235,9 +232,9 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
         }
     }
 
-    function appriximateCircle(X, Y, R) {
+    function approximateCircle(X, Y, R) {
         var rotatedAngle, x, y;
-        var sides = 64;
+        var sides = 32;
         var points = [];
 
         for (var d = 0; d < sides - 1; d++) {

@@ -834,7 +834,10 @@ module.exports.getProperties = function (Feature, FeatureType) {
             ConstructionProperties = {
                 cadastreNumber: '', // 
                 ObjectType: '', // require
-                AssignationName: ''
+                AssignationName: '',
+                Address: {
+                    Note: ''
+                }
             };
             if (Feature.CadastralNumber) {
                 ConstructionProperties.cadastreNumber = Feature.CadastralNumber;
@@ -844,13 +847,17 @@ module.exports.getProperties = function (Feature, FeatureType) {
             
             ConstructionProperties.AssignationName = Feature.AssignationName;
             ConstructionProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            ConstructionProperties["Address"]["Note"] = Feature.Address.Note;
             break;
         }
         case 'Building':{
             BuildingProperties = {
                 cadastreNumber: '', // 
                 ObjectType: '', // require
-                AssignationName: ''
+                AssignationName: '',
+                Address: {
+                    Note: ''
+                }
             };
             if (Feature.CadastralNumber) {
                 BuildingProperties.cadastreNumber = Feature.CadastralNumber;
@@ -860,13 +867,17 @@ module.exports.getProperties = function (Feature, FeatureType) {
             
             BuildingProperties.AssignationName = Feature.AssignationName;
             BuildingProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            BuildingProperties["Address"]["Note"] = Feature.Address.Note;
             break;
         }
         case 'Uncompleted':{
             UncompletedProperties = {
                 cadastreNumber: '', // 
                 ObjectType: '', // require
-                AssignationName: ''
+                AssignationName: '',
+                Address: {
+                    Note: ''
+                }
             };
             if (Feature.CadastralNumber) {
                 UncompletedProperties.cadastreNumber = Feature.CadastralNumber;
@@ -876,6 +887,7 @@ module.exports.getProperties = function (Feature, FeatureType) {
             
             UncompletedProperties.AssignationName = Feature.AssignationName;
             UncompletedProperties.ObjectType = getValueFromDict(Feature.ObjectType, dZone);
+            UncompletedProperties["Address"]["Note"] = Feature.Address.Note;
             break;
         }
         default :{
