@@ -229,11 +229,10 @@ function StartParse() {
                 map.on('singleclick', function (evt) {
                     var features = [];
                     var coordinate = evt.coordinate;
-
+                    $('#jj*').remove();
                     for (var i = 0; i < map.getLayers().getLength(); i++) {
                         var layer = map.getLayers().item(i);
-                        if ((layer instanceof ol.layer.Vector) &&
-                                (layer.getVisible())) {
+                        if ((layer instanceof ol.layer.Vector) && (layer.getVisible())) {
                             var feature = layer.getSource().getClosestFeatureToCoordinate(evt.coordinate);
                             if (feature) {
                                 features.push(feature);
