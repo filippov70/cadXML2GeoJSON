@@ -71,19 +71,20 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
                 (SpatialElement.SpelementUnit.R !== undefined)) {
             coord = [Number(SpatialElement.SpelementUnit.Ordinate.Y), Number(SpatialElement.SpelementUnit.Ordinate.X)];
             re_projected = convertCoord(coord);
+            console.log(coord[0], re_projected[0]);
             return {
                 'R': Number(SpatialElement.SpelementUnit.R),
-                'X': Number(re_projected[0]),
-                'Y': Number(re_projected[1])
+                'Y': Number(re_projected[0]),
+                'X': Number(re_projected[1])
             };
         } else {
-//            if (SpatialElement.SpelementUnit.length === 1)
-//                return null;
-            var firstPoint = SpatialElement.SpelementUnit[0].Ordinate;
-            var lastPoint = SpatialElement.SpelementUnit[SpatialElement.SpelementUnit.length - 1].Ordinate;
-            if ((firstPoint.X === lastPoint.X) && (firstPoint.Y === lastPoint.Y)) {
+            if (SpatialElement.SpelementUnit.length === 1)
+                return null;
+            var firstPoint = SpatialElement.SpelementUnit[0];
+            var lastPoint = SpatialElement.SpelementUnit[SpatialElement.SpelementUnit.length - 1];
+            if (firstPoint.SuNmb === lastPoint.SuNmb) {
                 LineString = false;
-                //console.log(firstPoint.X, lastPoint.X, firstPoint.Y, lastPoint.Y);
+                //console.log(LineString, firstPoint.SuNmb, lastPoint.SuNmb);
                 for (var j = 0; j < SpatialElement.SpelementUnit.length - 1; j++) {
                     var point = SpatialElement.SpelementUnit[j];
                     var xy = [];
@@ -96,6 +97,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
                 Area = polygonArea(xs, ys, xs.length);
             } else {
                 LineString = true;
+                //console.log(LineString, firstPoint.SuNmb, lastPoint.SuNmb);
                 for (var j = 0; j < SpatialElement.SpelementUnit.length - 1; j++) {
                     var point = SpatialElement.SpelementUnit[j];
                     var xy = [];
@@ -105,6 +107,13 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
                     xy.push(Number(re_projected[1]));
                     contour.push(xy);
                 }
+                // бывае что LineString имеет одинаковые первую и последнюю точки
+                // но SuNmb разные.
+//                if ((contour[0][0][0] === contour[0][contour[0].length-1][0]) &&
+//                        (contour[0][0][1] === contour[0][contour[0].length-1][1])){
+//                    delete(contour[0][contour.length-1]);
+//                    console.log(contour[0][0][0], contour[0][contour[0].length-1][0],LineString);
+//                }
             }
             //console.log(Area);
             return contour;
@@ -156,6 +165,9 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
     // в этом случае контуры cntrs будут хранить коллекцию
     function processRealtySpatialElement(SpatialElement) {
         var cntrs = [];
+        if (_proj !== null) {
+            spatialSysName = getSpatialSysName();
+        }
         if (SpatialElement.splice) {
             var MaxArea;
             var MaxAreaIdx = 0;
@@ -236,7 +248,8 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
         var rotatedAngle, x, y;
         var sides = 32;
         var points = [];
-
+        x = X + R; // сдвиг на окружность
+        //console.log('approximateCircle');
         for (var d = 0; d < sides - 1; d++) {
             var xy = [];
             rotatedAngle = (d * 2 * Math.PI / sides);//angle + (d * 2 * Math.PI / sides);

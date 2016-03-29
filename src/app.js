@@ -32,7 +32,7 @@ function StartParse() {
     // https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
-    $.get('./testdata/doc2161974.xml', function (xml) {
+    $.get('./testdata/doc2153522.xml', function (xml) {
         //var json = $.xml2json(xml).CadastralBlocks;
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
         //console.log(Converter.GeoJSON);
