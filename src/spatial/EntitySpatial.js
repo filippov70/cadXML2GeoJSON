@@ -71,7 +71,6 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
                 (SpatialElement.SpelementUnit.R !== undefined)) {
             coord = [Number(SpatialElement.SpelementUnit.Ordinate.Y), Number(SpatialElement.SpelementUnit.Ordinate.X)];
             re_projected = convertCoord(coord);
-            console.log(coord[0], re_projected[0]);
             return {
                 'R': Number(SpatialElement.SpelementUnit.R),
                 'Y': Number(re_projected[0]),

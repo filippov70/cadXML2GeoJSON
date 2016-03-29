@@ -11,9 +11,9 @@ StartParse();
 
 function StartParse() {
 
-    var container = document.getElementById('popup');
-    var content = document.getElementById('popup-content');
-    var closer = document.getElementById('popup-closer');
+    var container = $('#popup')[0];
+    var content = $('#popup-content');
+    var closer = $('#popup-closer')[0];
 
     closer.onclick = function () {
         overlay.setPosition(undefined);
@@ -32,6 +32,7 @@ function StartParse() {
     // https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
+    $('#loading').toggleClass('hidden');
     $.get('./testdata/doc2153522.xml', function (xml) {
         //var json = $.xml2json(xml).CadastralBlocks;
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
@@ -39,6 +40,7 @@ function StartParse() {
         parsedData = Converter.GeoJSON(xml, true);
     }).success(
             function () {
+                $('#loading').toggleClass('hidden');
                 // http://www.color-hex.com/
                 var parcelFill = new ol.style.Fill({
                     color: '#bbf144'
@@ -129,13 +131,13 @@ function StartParse() {
                     source: realtySource,
                     style: realtyStyle,
                     opacity: 0.5
-                }); 
+                });
                 var realtyCollectionLayer = new ol.layer.Vector({
                     title: 'ОКС сложные',
                     source: realtyCollectionSource,
                     style: realtyStyle,
                     opacity: 0.5
-                }); 
+                });
                 var boundLayer = new ol.layer.Vector({
                     title: 'Границы',
                     source: boundSource,
@@ -230,7 +232,8 @@ function StartParse() {
 
                     for (var i = 0; i < map.getLayers().getLength(); i++) {
                         var layer = map.getLayers().item(i);
-                        if (layer instanceof ol.layer.Vector) {
+                        if ((layer instanceof ol.layer.Vector) &&
+                                (layer.getVisible())) {
                             var feature = layer.getSource().getClosestFeatureToCoordinate(evt.coordinate);
                             if (feature) {
                                 features.push(feature);
@@ -241,7 +244,7 @@ function StartParse() {
                 });
 
                 function createInfoContetnt(features, coordinate) {
-                    var contenInfo = '';
+                    //var contenInfo = '';
 //                    var st = '';
 //                    var cat = '';
 //                    var name = '';
@@ -263,21 +266,34 @@ function StartParse() {
 //                        if (f.get('Category') !== undefined) {
 //                            cat = f.get('Category');
 //                        }
-                        console.log(features[i].getProperties());
+                        //console.log(features[i].getProperties());
 //                    }
 //                    var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
 //                            coordinate, 'EPSG:3857', 'EPSG:4326'));
-//                        var json = JSON.stringify(features[i].getProperties());
-//                        contenInfo += '<p>' + $('').jJsonViewer(json) + '</p>';
-                        
+                        //console.log(features[i].getProperties());
+                        //if (features[i].length > 0) {
+                            var json = JSON.stringify(features[i].getProperties(), function (k, v) {
+                                if (k !== 'geometry') {
+                                    return v;
+                                }
+                            });
+                        //}
+
+                        if ((json) && (!$.isEmptyObject(json))) {
+                            content.append('<div id="jj' + i + '" class="jjson"></div>');
+                            //var panel = '<div id="jj' + i + '" class="jjson">';
+                            var panel = $('#jj' + i);
+                            panel.jJsonViewer(json, {expanded: true});
+                        }
+
 //                    content.innerHTML = '<p>Кадастровый номер:<code>' + cn +
 //                            '</code></p><p>Объект:<code>' + name + '</code></p>' +
 //                            '</code><p>Статус:<code>' + st + '</code></p>' +
 //                            '</code><p>Категория земель:<code>' + cat + '</code></p>';
                         //content.jJsonViewer(features[i].getProperties()); 
                     }
-//                    content.innerHTML = contenInfo;
-//                    overlay.setPosition(coordinate);
+                    //content.innerHTML = contenInfo;
+                    overlay.setPosition(coordinate);
                 }
             });
 
