@@ -33,6 +33,7 @@ function StartParse() {
     // https://bitbucket.org/surenrao/xml2json
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
+    $('#wait').toggleClass('hidden');
     $.get('./testdata/doc2153522.xml', function (xml) {
         //var json = $.xml2json(xml).CadastralBlocks;
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
@@ -40,6 +41,7 @@ function StartParse() {
         parsedData = Converter.GeoJSON(xml, true);
     }).success(
             function () {
+                $('#wait').toggleClass('hidden');
                 // http://www.color-hex.com/
                 var parcelFill = new ol.style.Fill({
                     color: '#bbf144'
