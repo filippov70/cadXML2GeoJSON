@@ -93,6 +93,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
                     xy.push(Number(re_projected[1]));
                     contour.push(xy);
                 }
+                contour.push(contour[0]);
                 Area = polygonArea(xs, ys, xs.length);
             } else {
                 LineString = true;

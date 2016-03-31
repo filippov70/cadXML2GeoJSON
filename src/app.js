@@ -271,19 +271,19 @@ function StartParse() {
 //                            coordinate, 'EPSG:3857', 'EPSG:4326'));
                         //console.log(features[i].getProperties());
                         //if (features[i].length > 0) {
-                            var json = JSON.stringify(features[i].getProperties(), function (k, v) {
-                                if (k !== 'geometry') {
-                                    return v;
-                                }
-                            });
+                        var json = JSON.stringify(features[i].getProperties(), function (k, v) {
+                            if (k !== 'geometry') {
+                                return v;
+                            }
+                        });
                         //}
-
-                        if ((json) && (!$.isEmptyObject(json))) {
-                            content.append('<div id="jj' + i + '" class="jjson"></div>');
-                            //var panel = '<div id="jj' + i + '" class="jjson">';
-                            var panel = $('#jj' + i);
-                            panel.jJsonViewer(json, {expanded: true});
-                        }
+                        console.log(json);
+//                        if ((json) && (!$.isPlainObject(json))) {
+//                            content.append('<div id="jj' + i + '" class="jjson"></div>');
+//                            console.log(json);
+//                            var panel = $('#jj' + i);
+//                            panel.jJsonViewer(json, {expanded: false});
+//                        }
 
 //                    content.innerHTML = '<p>Кадастровый номер:<code>' + cn +
 //                            '</code></p><p>Объект:<code>' + name + '</code></p>' +
@@ -292,7 +292,7 @@ function StartParse() {
                         //content.jJsonViewer(features[i].getProperties()); 
                     }
                     //content.innerHTML = contenInfo;
-                    overlay.setPosition(coordinate);
+                    //overlay.setPosition(coordinate);
                 }
             });
 
