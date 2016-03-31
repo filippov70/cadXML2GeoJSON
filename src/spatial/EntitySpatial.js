@@ -98,7 +98,7 @@ module.exports.getEntitySpatial = function (EntitySpatialObj, proj, oType, partO
             } else {
                 LineString = true;
                 //console.log(LineString, firstPoint.SuNmb, lastPoint.SuNmb);
-                for (var j = 0; j < SpatialElement.SpelementUnit.length - 1; j++) {
+                for (var j = 0; j < SpatialElement.SpelementUnit.length; j++) {
                     var point = SpatialElement.SpelementUnit[j];
                     var xy = [];
                     coord = [Number(point.Ordinate.Y), Number(point.Ordinate.X)];

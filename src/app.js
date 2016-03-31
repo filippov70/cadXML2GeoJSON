@@ -33,7 +33,7 @@ function StartParse() {
     // http://www.chrome-allow-file-access-from-file.com/
     var parsedData;
     $('#loading').toggleClass('hidden');
-    $.get('./testdata/doc2153522.xml', function (xml) {
+    $.get('./testdata/doc2161974.xml', function (xml) {
         //var json = $.xml2json(xml).CadastralBlocks;
         // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
         //console.log(Converter.GeoJSON);
@@ -104,10 +104,10 @@ function StartParse() {
                     features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealty),
                     projection: 'EPSG:3857'
                 });
-                var realtyCollectionSource = new ol.source.Vector({
-                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealtyGeometryCollection),
-                    projection: 'EPSG:3857'
-                });
+//                var realtyCollectionSource = new ol.source.Vector({
+//                    features: (new ol.format.GeoJSON()).readFeatures(parsedData.geoJSONRealtyGeometryCollection),
+//                    projection: 'EPSG:3857'
+//                });
                 var boundSource = new ol.source.Vector({
                     projection: 'EPSG:3857'
                 });
@@ -132,12 +132,12 @@ function StartParse() {
                     style: realtyStyle,
                     opacity: 0.5
                 });
-                var realtyCollectionLayer = new ol.layer.Vector({
-                    title: 'ОКС сложные',
-                    source: realtyCollectionSource,
-                    style: realtyStyle,
-                    opacity: 0.5
-                });
+//                var realtyCollectionLayer = new ol.layer.Vector({
+//                    title: 'ОКС сложные',
+//                    source: realtyCollectionSource,
+//                    style: realtyStyle,
+//                    opacity: 0.5
+//                });
                 var boundLayer = new ol.layer.Vector({
                     title: 'Границы',
                     source: boundSource,
@@ -153,17 +153,17 @@ function StartParse() {
 
                 var format = new ol.format.GeoJSON();
 
-                var realtysCollection = parsedData.geoJSONRealtyGeometryCollection;
+//                var realtysCollection = parsedData.geoJSONRealtyGeometryCollection;
 
-                for (var i = 0; i < realtysCollection.features.length; i++) {
-                    //console.log(realtysCollection.features[i]);
-                    var geometryObj = format.readGeometry(realtysCollection.features[i].geometry);
-                    var feature = new ol.Feature({
-                        geometry: geometryObj//,
-                                //propA : parsedData.features[i].properties.cadnumber
-                    });
-                    realtyCollectionLayer.getSource().addFeature(feature);
-                }
+//                for (var i = 0; i < realtysCollection.features.length; i++) {
+//                    //console.log(realtysCollection.features[i]);
+//                    var geometryObj = format.readGeometry(realtysCollection.features[i].geometry);
+//                    var feature = new ol.Feature({
+//                        geometry: geometryObj//,
+//                                //propA : parsedData.features[i].properties.cadnumber
+//                    });
+//                    realtyCollectionLayer.getSource().addFeature(feature);
+//                }
                 var zones = parsedData.geoJSONZones;
                 for (var i = 0; i < zones.features.length; i++) {
                     var geometryObj = format.readGeometry(zones.features[i].geometry);
@@ -209,7 +209,7 @@ function StartParse() {
                             })
                         }),
                         quartalLayer, boundLayer, zoneLayer,
-                        parcelLayer, realtyLayer, realtyCollectionLayer
+                        parcelLayer, realtyLayer
                     ],
                     overlays: [overlay],
                     view: new ol.View({

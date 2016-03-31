@@ -24,10 +24,10 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         features: []
     };
     // Отдельное хранилище для GeometryCollection
-    var geoJSONRealtyCollection = {
-        type: "FeatureCollection",
-        features: []
-    };
+//    var geoJSONRealtyCollection = {
+//        type: "FeatureCollection",
+//        features: []
+//    };
     var geoJSONOSMPoints = {
         type: "FeatureCollection",
         features: []
@@ -207,16 +207,22 @@ module.exports.GeoJSON = function (xmlData, reproject) {
             function processES(EntitySpatial, oType) {
                 var spObj = ES.getEntitySpatial(EntitySpatial, projMSK, oType, false);
                 if (spObj) {
-                    feature.geometry = spObj;
                     if (spObj.type === 'GeometryCollection') {
-                        geoJSONRealtyCollection.features.push(feature);
+                        // GeoJSON с коллекцией трудно открывать на десктопе
+                        // ogr2ogr -f GeoJSON -explodecollections explode doc2139433_xml_RealtyGC.geojson
+                        // поэтому лучше создать фич по количеству объектов в коллекции
+                        for(var k=0; k < spObj.geometries.length-1; k++) {
+                            feature.geometry = spObj.geometries[k];
+                            geoJSONRealty.features.push(feature);
+                        }
+                        //geoJSONRealtyCollection.features.push(feature);
                         //console.log('Добавлен geoJSONRealtyGeometryCollection');
                         //console.log(spObj.geometries);
                     } else {
+                        feature.geometry = spObj;
                         geoJSONRealty.features.push(feature);
-                        //console.log('Добавлен geoJSONRealty. Type ' + spObj.type);
-                        //console.log(spObj.coordinates);
                     }
+                    
                 } else {
                     console.log('ОКС с пустой геометрией! Объект будет пропущен.');
                 }
@@ -271,7 +277,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         geoJSONBounds: geoJSONBounds,
         geoJSONZones: geoJSONZones,
         geoJSONParcels: geoJSONParcels,
-        geoJSONRealty: geoJSONRealty,
-        geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
+        geoJSONRealty: geoJSONRealty
+        //geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
     };
 };
