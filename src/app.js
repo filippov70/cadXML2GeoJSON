@@ -8,7 +8,7 @@
   var Converter = require('./cadXML2GeoJSON.js');
 
   var parcelStyle = {
-    fillColor: "#ff7800",
+    fillColor: "#b8e50e",
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -19,24 +19,24 @@
     color: "#000",
     weight: 1,
     opacity: 1,
-    fillOpacity: 0.8
+    fillOpacity: 1
   };
   var quartallStyle = {
-    fillColor: "#ff7800",
+    fillColor: "#e4dea4",
     color: "#000",
     weight: 1,
     opacity: 1,
-    fillOpacity: 0.8
+    fillOpacity: 0.3
   };
   var zoneStyle = {
-    fillColor: "#ff7800",
+    fillColor: "#f91414",
     color: "#000",
     weight: 1,
     opacity: 1,
     fillOpacity: 0.8
   };
   var boundlStyle = {
-    fillColor: "#ff7800",
+    fillColor: "#4b5c70",
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -144,11 +144,15 @@
       var oksLayer = layerFActory(oks, oksStyle);
       var parcelLayer = layerFActory(parcels, parcelStyle);
       var zoneLayer = layerFActory(zones, zoneStyle);
+      var boundLayer = layerFActory(bounds, boundlStyle);
+      var quartalLayer = layerFActory(quartal, quartallStyle);
 
       var layerControl = L.control.layers({}, {
-        'ОКС': oksLayer,
+        'Квартал': quartalLayer,
+        'Границы': boundLayer,
+        'Зоны': zoneLayer,
         'Участки': parcelLayer,
-        'Зоны': zoneLayer
+        'ОКС': oksLayer
       }).addTo(data._map);
 
       data._map.fitBounds(parcelLayer.getBounds());
