@@ -6,6 +6,61 @@
 
 (function () {
   var Converter = require('./cadXML2GeoJSON.js');
+
+  var parcelStyle = {
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
+  var oksStyle = {
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
+  var quartallStyle = {
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
+  var zoneStyle = {
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
+  var boundlStyle = {
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
+
+  function layerFActory(geoJSON, layerStyle) {
+    geoJSON.crs = {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:EPSG::3857"
+      }
+    };
+    return L.Proj.geoJson(
+            geoJSON, {
+              style: layerStyle,
+              onEachFeature: function (feature, layer)
+              {
+                //layer.bindPopup(feature.properties);
+              }
+            }
+    );
+  }
+
   var data = {
 
     init: function (map, reproject) {
@@ -80,19 +135,23 @@
       // https://bitbucket.org/surenrao/xml2json
       // http://www.chrome-allow-file-access-from-file.com/
       var parsedData = Converter.GeoJSON(reader.result);
-      console.log(parsedData.geoJSONParcels);
-//      $.get('./testdata/doc2161974.xml', function (xml) {
-//        //var json = $.xml2json(xml).CadastralBlocks;
-//        // $("#data").html('<code>'+JSON.stringify(json)+'</code>');
-//        console.log(Converter.GeoJSON);
-//        parsedData = Converter.GeoJSON(xml, true);
-//      }).success(
-//              function () {
-//                $('#loading').toggleClass('hidden');
-//                var zones = parsedData.geoJSONZones;
-//                var quartal = parsedData.geoJSONQuartal;
-//                var bounds = parsedData.geoJSONBounds;
-//              });
+      var parcels = parsedData.geoJSONParcels;
+      var oks = parsedData.geoJSONRealty;
+      var zones = parsedData.geoJSONZones;
+      var quartal = parsedData.geoJSONQuartal;
+      var bounds = parsedData.geoJSONBounds;
+
+      var oksLayer = layerFActory(oks, oksStyle);
+      var parcelLayer = layerFActory(parcels, parcelStyle);
+      var zoneLayer = layerFActory(zones, zoneStyle);
+
+      var layerControl = L.control.layers({}, {
+        'ОКС': oksLayer,
+        'Участки': parcelLayer,
+        'Зоны': zoneLayer
+      }).addTo(data._map);
+
+      data._map.fitBounds(parcelLayer.getBounds());
     }
   };
   window.convertedData = data;

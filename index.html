@@ -12,7 +12,8 @@
         <script src="libs/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
         <script src="libs/jjsonviewer.js" type="text/javascript"></script>
         <script src="libs/ll/leaflet.js" type="text/javascript"></script>
-        <!--        <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>-->
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/0.7.2/proj4leaflet.min.js"></script>
 
         <style>
             html, body, #infoPanel, #map {
@@ -93,35 +94,39 @@
 
     </head>
     <body>
-        
+
         <div id="infoPanel">
             <div id="map"></div>
             <div id="info">
                 <div>Конветрация XML-файлов Росреестра в формат GeoJSON<br>
-                Внимание! Некоторые XML-файлы имеют большой размер,<br>
-                такие файлы могут обрабатываться очень долго.</div>
+                    Внимание! Некоторые XML-файлы имеют большой размер,<br>
+                    такие файлы могут обрабатываться очень долго.</div>
                 <input type="file" onChange="window.convertedData.selectFile(this);">
                 <div id="resCont">
                     <div id="fileProgress"></div>
                     <div id="kptInfo"></div>
-<!--                    <div id="projection" class="hidden">
-                        Текущая проекция:<br>
-                        <textarea id="projectionInput"></textarea><br>
-                        <input type="checkbox" id="useThisProjection" /><label>использовать данную проекцию</label>
-                    </div>-->
+                    <!--                    <div id="projection" class="hidden">
+                                            Текущая проекция:<br>
+                                            <textarea id="projectionInput"></textarea><br>
+                                            <input type="checkbox" id="useThisProjection" /><label>использовать данную проекцию</label>
+                                        </div>-->
                     <div id="exportCont">
                         <input type="checkbox" id="convertMSK" class="hidden" /><label>Сохранить в МСК</label>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <script src="dist/app.js" type="text/javascript"></script>
         <script type="text/javascript">
-            var map = L.map('map').setView([54.5, 84], 13);
-            window.convertedData.init(map);
+                    var map = L.map('map', {
+//                      center: [10047010, 8478107], 
+//                      zoom: 4,
+//                      crs: L.CRS.EPSG3857
+                    });
+                    window.convertedData.init(map);
         </script>
-        
+
         <script type="text/javascript">
             (function (d, w, c) {
               (w[c] = w[c] || []).push(function () {
