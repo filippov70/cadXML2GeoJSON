@@ -4,119 +4,155 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
         <title>CadXML2GeoJSON test</title>
-
-        <link rel="stylesheet" href="libs/ol.css" type="text/css">
+        <link href="libs/ll/leaflet.css" rel="stylesheet" type="text/css"/>
         <link href="libs/jjsonviewer.css" rel="stylesheet" type="text/css"/>
         <link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="libs/ol3-layerswitcher.css" rel="stylesheet" type="text/css"/>
-        <script src="libs/ol-debug.js" type="text/javascript"></script>
         <script src="libs/jquery.js" type="text/javascript"></script>
         <script src="libs/jquery.xml2json.js" type="text/javascript"></script>
         <script src="libs/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="libs/ol3-layerswitcher.js" type="text/javascript"></script>
         <script src="libs/jjsonviewer.js" type="text/javascript"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>
-       
+        <script src="libs/ll/leaflet.js" type="text/javascript"></script>
+        <!--        <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>-->
+
         <style>
-            html {height: 100%}
-            body {height: 100%}
-            #map {
+            html, body, #infoPanel, #map {
                 height: 100%;
                 width: 100%;
+                margin: 0px;
+            }
+            #info {
+                width: 35%;
                 position: absolute;
+                background: aliceblue;
+                right: 10px;
+                top: 10px;
+                padding: 20px;
+                box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+                border-radius: 12px;
             }
-            .center {
-                margin: auto;
-                width: 64px;
-                height: 64px;
+            input {
+                padding-top: 20px;
+                background-color: transparent;
             }
-            .ol-popup {
-                position: absolute;
-                background-color: white;
-                -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-                filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-                padding: 15px;
-                border-radius: 10px;
-                border: 1px solid #cccccc;
-                bottom: 12px;
-                left: -50px;
-                min-width: 280px;
+            input::-ms-browse {
+                margin-left: 10px;
             }
-            .ol-popup:after, .ol-popup:before {
-                top: 100%;
-                border: solid transparent;
-                content: " ";
-                height: 0;
-                width: 0;
-                position: absolute;
-                pointer-events: none;
+            #kptInfo div div {
+                padding-left: 20px;
             }
-            .ol-popup:after {
-                border-top-color: white;
-                border-width: 10px;
-                left: 48px;
-                margin-left: -10px;
+            .pointer {
+                cursor: pointer;
             }
-            .ol-popup:before {
-                border-top-color: #cccccc;
-                border-width: 11px;
-                left: 48px;
-                margin-left: -11px;
+            .hidden {
+                display: none;
             }
-            .ol-popup-closer {
+            .button {
+                display: inline-block;
+                outline: none;
+                cursor: pointer;
+                border: solid 1px #da7c0c;
+                margin-top: 10px;
+                text-align: center;
                 text-decoration: none;
-                position: absolute;
-                top: 2px;
-                right: 8px;
+                font: 14px/100% Arial, Helvetica, sans-serif;
+                padding: .5em 2em .55em;
+                -webkit-border-radius: .5em; 
+                -moz-border-radius: .5em;
+                border-radius: .3em;
+                -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+                -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+                box-shadow: 0 1px 2px rgba(0,0,0,.2);
             }
-            .ol-popup-closer:after {
-                content: "✖";
+            .button:hover {
+                background: #f47c20;
+                background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+                background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+                filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
+            }
+            .button:active {
+                position: relative;
+                top: 1px;
+            }
+            .leaflet-popup-content {
+                max-height: 500px;
+                overflow-y: auto;
+            }
+
+            .leaflet-popup-content div div {
+                padding-left: 20px;
+            }
+
+            #cadVersion {
+                font-weight: bold;
+            }
+            #projectionInput {
+                width: 500px;
+                height: 70px;
             }
         </style>
 
     </head>
     <body>
-        <!--<div class="container-fluid">-->
-        <div id="loading" class="hidden center"><img alt="идёт загрузка" src=""></div>
-        <div id="map"></div>
-        <!--</div>-->
-        <div id="txt"  style="height: 300px; width: 70%; overflow: scroll" class="well-lg hidden"></div>
-        <div id="popup" class="ol-popup">
-            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-            <div id="popup-content"></div>
+        
+        <div id="infoPanel">
+            <div id="map"></div>
+            <div id="info">
+                <div>Конветрация XML-файлов Росреестра в формат GeoJSON<br>
+                Внимание! Некоторые XML-файлы имеют большой размер,<br>
+                такие файлы могут обрабатываться очень долго.</div>
+                <input type="file" onChange="window.convertedData.selectFile(this);">
+                <div id="resCont">
+                    <div id="fileProgress"></div>
+                    <div id="kptInfo"></div>
+<!--                    <div id="projection" class="hidden">
+                        Текущая проекция:<br>
+                        <textarea id="projectionInput"></textarea><br>
+                        <input type="checkbox" id="useThisProjection" /><label>использовать данную проекцию</label>
+                    </div>-->
+                    <div id="exportCont">
+                        <input type="checkbox" id="convertMSK" class="hidden" /><label>Сохранить в МСК</label>
+                    </div>
+                </div>
+            </div>
         </div>
+        
         <script src="dist/app.js" type="text/javascript"></script>
         <script type="text/javascript">
+            var map = L.map('map').setView([54.5, 84], 13);
+            window.convertedData.init(map);
+        </script>
+        
+        <script type="text/javascript">
             (function (d, w, c) {
-                (w[c] = w[c] || []).push(function () {
-                    try {
-                        w.yaCounter33430738 = new Ya.Metrika({
-                            id: 33430738,
-                            clickmap: true,
-                            trackLinks: true,
-                            accurateTrackBounce: true
-                        });
-                    } catch (e) {
-                    }
-                });
-
-                var n = d.getElementsByTagName("script")[0],
-                        s = d.createElement("script"),
-                        f = function () {
-                            n.parentNode.insertBefore(s, n);
-                        };
-                s.type = "text/javascript";
-                s.async = true;
-                s.src = "https://mc.yandex.ru/metrika/watch.js";
-
-                if (w.opera == "[object Opera]") {
-                    d.addEventListener("DOMContentLoaded", f, false);
-                } else {
-                    f();
+              (w[c] = w[c] || []).push(function () {
+                try {
+                  w.yaCounter33430738 = new Ya.Metrika({
+                    id: 33430738,
+                    clickmap: true,
+                    trackLinks: true,
+                    accurateTrackBounce: true
+                  });
+                } catch (e) {
                 }
+              });
+
+              var n = d.getElementsByTagName("script")[0],
+                      s = d.createElement("script"),
+                      f = function () {
+                        n.parentNode.insertBefore(s, n);
+                      };
+              s.type = "text/javascript";
+              s.async = true;
+              s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+              if (w.opera == "[object Opera]") {
+                d.addEventListener("DOMContentLoaded", f, false);
+              } else {
+                f();
+              }
             })(document, window, "yandex_metrika_callbacks");
         </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/33430738" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+        <noscript><div><img src="https://mc.yandex.ru/watch/33430738" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+        <!-- /Yandex.Metrika counter -->
     </body>
 </html>
