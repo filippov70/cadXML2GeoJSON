@@ -66,7 +66,7 @@
     init: function (map, reproject) {
       data._map = map;
       data.reproject = reproject;
-      data._geoContent = {
+      data._groups = {
 
       };
 
@@ -85,7 +85,7 @@
       L.DomUtil.removeClass(convertCoord, 'hidden');
       data._countSpan = L.DomUtil.create('span', '', data._exportCont);
       exportIcon.addEventListener('click', function () {
-        var obj = data.getBlob(convertCoord.checked);
+        var obj = data.getBlob();
         if (navigator.msSaveOrOpenBlob) { // IE 10+
           navigator.msSaveOrOpenBlob(obj.blob, obj.file);
         } else {
@@ -96,7 +96,25 @@
       }, false);
       L.DomUtil.addClass(data._exportCont, 'hidden');
       data._kptInfo = document.getElementById('kptInfo');
-      data._groups = {};
+
+    },
+
+    getBlob: function () {
+      var fc = null,
+              items = data._groups;
+      for(var g in items){
+        var geojson = items[g];
+          if (fc) {
+            Array.prototype.push.apply(fc.features, geojson.features);
+          } else {
+            fc = geojson;
+          }
+      }
+      return {
+        file: 'data_' + Date.now() + '.geojson',
+        blob: new Blob([JSON.stringify(fc, null, '\t')], {type: 'text/json;charset=utf-8;'}),
+        count: fc ? fc.features.length : 0
+      };
     },
 
     selectFile: function (el) {
@@ -104,6 +122,7 @@
       L.DomUtil.addClass(data._exportCont, 'hidden');
       var reader = new FileReader(),
               file = el.files[0];
+
       reader.onload = function () {
         data._fileProgress.innerHTML = 'загружено: <b>' + file.size + '</b> байт';
 //        Object.keys(data._groups).forEach(function (type) {
@@ -140,6 +159,14 @@
       var zones = parsedData.geoJSONZones;
       var quartal = parsedData.geoJSONQuartal;
       var bounds = parsedData.geoJSONBounds;
+      
+      data._groups = {
+        parcels: parcels,
+        oks: oks,
+        zones: zones,
+        quartal: quartal,
+        bounds: bounds
+      };
 
       var oksLayer = layerFActory(oks, oksStyle);
       var parcelLayer = layerFActory(parcels, parcelStyle);
@@ -156,6 +183,7 @@
       }).addTo(data._map);
 
       data._map.fitBounds(parcelLayer.getBounds());
+      L.DomUtil.removeClass(data._exportCont, 'hidden'); 
     }
   };
   window.convertedData = data;
