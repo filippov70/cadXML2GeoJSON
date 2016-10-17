@@ -81,8 +81,8 @@
         exportIcon.setAttribute('href', '');
       }
       exportIcon.innerHTML = 'Экспорт в GeoJSON';
-      var convertCoord = L.DomUtil.get('convertMSK');
-      L.DomUtil.removeClass(convertCoord, 'hidden');
+//      var convertCoord = L.DomUtil.get('convertMSK');
+//      L.DomUtil.removeClass(convertCoord, 'hidden');
       data._countSpan = L.DomUtil.create('span', '', data._exportCont);
       exportIcon.addEventListener('click', function () {
         var obj = data.getBlob();
@@ -119,6 +119,7 @@
 
     selectFile: function (el) {
       data._kptInfo.innerHTML = '';
+      data._fileProgress.innerHTML = '';
       L.DomUtil.addClass(data._exportCont, 'hidden');
       var reader = new FileReader(),
               file = el.files[0];
@@ -136,6 +137,12 @@
 //          group.clearLayers();
 //        });
 //        data._groupsMsk = {};
+        if (data._map.layers){
+          for (var i = 0; i < data._map.layers.length; i++) {
+            data._map.removeLayer(data._map.layers[i]);
+          }
+        }
+        data._groups = {};
         data.parseFile(reader);
       };
       reader.onprogress = function (data) {
@@ -173,7 +180,10 @@
       var zoneLayer = layerFActory(zones, zoneStyle);
       var boundLayer = layerFActory(bounds, boundlStyle);
       var quartalLayer = layerFActory(quartal, quartallStyle);
-
+      var oldLayerControl = document.getElementsByClassName('leaflet-control-layers');
+      if(oldLayerControl) {
+        L.DomUtil.remove(oldLayerControl);
+      }
       var layerControl = L.control.layers({}, {
         'Квартал': quartalLayer,
         'Границы': boundLayer,
