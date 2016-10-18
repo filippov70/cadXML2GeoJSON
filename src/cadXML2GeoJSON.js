@@ -97,10 +97,19 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         console.log('Объект Границы с пустой геометрией! Объект будет пропущен.');
                         continue;
                     }
-                    feature.geometry = spObj;
+                    //feature.geometry = spObj;
                     // Остальные свойства....
-
-                    geoJSONBounds.features.push(feature);
+                    if (spObj) {
+                        feature.geometry = spObj;
+                        // Остальные свойства....
+                        var props = Props.getProperties(AllData.Bounds.Bound[i], 'Bound');
+                        if (props) {
+                            feature.properties = props.boundProperties;
+                        }
+                        //console.log('Объект создан. КН:' + feature.properties.cadastreNumber);
+                        geoJSONBounds.features.push(feature);
+                    }
+                    //geoJSONBounds.features.push(feature);
                 }
             }
         } else {
@@ -108,10 +117,19 @@ module.exports.GeoJSON = function (xmlData, reproject) {
             if ((spObj === undefined) || (spObj.length === 0)) {
                 console.log('Объект Границы с пустой геометрией! Объект будет пропущен.');
             }
-            feature.geometry = spObj;
+            //feature.geometry = spObj;
             // Остальные свойства....
-
-            geoJSONBounds.features.push(feature);
+            if (spObj) {
+                feature.geometry = spObj;
+                // Остальные свойства....
+                var props = Props.getProperties(AllData.Bounds.Bound, 'Bound');
+                if (props) {
+                    feature.properties = props.boundProperties;
+                }
+                //console.log('Объект создан. КН:' + feature.properties.cadastreNumber);
+                geoJSONBounds.features.push(feature);
+            }
+            //geoJSONBounds.features.push(feature);
         }
     }
     // Обработка зон. Не могут быть многоконтурными
@@ -129,9 +147,18 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         console.log('Объект Зоны с пустой геометрией! Объект будет пропущен.');
                         continue;
                     }
-                    feature.geometry = spObj;
-
-                    geoJSONZones.features.push(feature);
+                    //feature.geometry = spObj;
+                    if (spObj) {
+                        feature.geometry = spObj;
+                        // Остальные свойства....
+                        var props = Props.getProperties(AllData.Zones.Zone[i], 'Zone');
+                        if (props) {
+                            feature.properties = props.zoneProperties;
+                        }
+                        //console.log('Объект создан. КН:' + feature.properties.cadastreNumber);
+                        geoJSONZones.features.push(feature);
+                    }
+                    //geoJSONZones.features.push(feature);
                 } else {
                     console.log('Нет описания пространственной составляющей зоны');
                 }
@@ -146,9 +173,18 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                 if ((spObj === undefined) || (spObj.length === 0)) {
                     console.log('Объект Зоны с пустой геометрией! Объект будет пропущен.');
                 }
-                feature.geometry = spObj;
-
-                geoJSONZones.features.push(feature);
+                //feature.geometry = spObj;
+                if (spObj) {
+                    feature.geometry = spObj;
+                    // Остальные свойства....
+                    var props = Props.getProperties(AllData.Zones.Zone, 'Zone');
+                    if (props) {
+                        feature.properties = props.zoneProperties;
+                    }
+                    //console.log('Объект создан. КН:' + feature.properties.cadastreNumber);
+                    geoJSONZones.features.push(feature);
+                }
+                //geoJSONZones.features.push(feature);
             } else {
                 console.log('Нет описания пространственной составляющей зоны');
             }
@@ -211,7 +247,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         // GeoJSON с коллекцией трудно открывать на десктопе
                         // ogr2ogr -f GeoJSON -explodecollections explode doc2139433_xml_RealtyGC.geojson
                         // поэтому лучше создать фич по количеству объектов в коллекции
-                        for(var k=0; k < spObj.geometries.length-1; k++) {
+                        for (var k = 0; k < spObj.geometries.length - 1; k++) {
                             feature.geometry = spObj.geometries[k];
                             geoJSONRealty.features.push(feature);
                         }
@@ -222,7 +258,7 @@ module.exports.GeoJSON = function (xmlData, reproject) {
                         feature.geometry = spObj;
                         geoJSONRealty.features.push(feature);
                     }
-                    
+
                 } else {
                     console.log('ОКС с пустой геометрией! Объект будет пропущен.');
                 }
@@ -278,6 +314,6 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         geoJSONZones: geoJSONZones,
         geoJSONParcels: geoJSONParcels,
         geoJSONRealty: geoJSONRealty
-        //geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
+                //geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
     };
 };

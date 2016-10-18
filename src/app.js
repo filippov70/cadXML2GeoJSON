@@ -170,7 +170,8 @@
             var zones = parsedData.geoJSONZones;
             var quartal = parsedData.geoJSONQuartal;
             var bounds = parsedData.geoJSONBounds;
-
+            console.log(zones);
+            console.log(bounds);
             data._groups = {
                 parcels: parcels,
                 oks: oks,
