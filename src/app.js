@@ -19,7 +19,7 @@
         color: "#000",
         weight: 1,
         opacity: 1,
-        fillOpacity: 1
+        fillOpacity: 0.5
     };
     var quartallStyle = {
         fillColor: "#e4dea4",
@@ -126,17 +126,7 @@
 
             reader.onload = function () {
                 data._fileProgress.innerHTML = 'загружено: <b>' + file.size + '</b> байт';
-//        Object.keys(data._groups).forEach(function (type) {
-//          var group = data._groups[type];
-//          group.clearLayers();
-//          data._map.removeLayer(group);
-//        });
-//        data._groups = {};
-//        Object.keys(data._groupsMsk).forEach(function (type) {
-//          var group = data._groupsMsk[type];
-//          group.clearLayers();
-//        });
-//        data._groupsMsk = {};
+
                 if (data._map.layers) {
                     for (var i = 0; i < data._map.layers.length; i++) {
                         data._map.removeLayer(data._map.layers[i]);
@@ -149,13 +139,12 @@
                 data._groups = {};
                 data.parseFile(reader);
             };
-            reader.onprogress = function (data) {
-                if (data.lengthComputable) {
-                    L.DomUtil.removeClass(data._resCont, 'hidden');
-                    var cnt = data.loaded / data.total;
-                    data._fileProgress.innerHTML = 'загружено: <b>' + data.loaded + '</b> байт' + (cnt === 1 ? '' : '(' + parseInt(cnt * 100, 10) + '%)');
-                }
-            };
+//            reader.onprogress = function (data) {
+//                if (data.lengthComputable) {
+//                    var cnt = data.loaded / data.total;
+//                    data._fileProgress.innerHTML = 'загружено: <b>' + data.loaded + '</b> байт' + (cnt === 1 ? '' : '(' + parseInt(cnt * 100, 10) + '%)');
+//                }
+//            };
             if (el.files.length) {
                 reader.readAsText(file);
             }

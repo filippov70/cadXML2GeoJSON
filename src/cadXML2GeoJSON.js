@@ -241,13 +241,13 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         if (AllData.ObjectsRealty.ObjectRealty.splice) {
 
             function processES(EntitySpatial, oType) {
-                var spObj = ES.getEntitySpatial(EntitySpatial, projMSK, oType, false);
+                var spObj = ES.getEntitySpatial(EntitySpatial, projMSK, oType, true);
                 if (spObj) {
                     if (spObj.type === 'GeometryCollection') {
                         // GeoJSON с коллекцией трудно открывать на десктопе
                         // ogr2ogr -f GeoJSON -explodecollections explode doc2139433_xml_RealtyGC.geojson
                         // поэтому лучше создать фич по количеству объектов в коллекции
-                        for (var k = 0; k < spObj.geometries.length - 1; k++) {
+                        for (var k = 0; k < spObj.geometries.length; k++) {
                             feature.geometry = spObj.geometries[k];
                             geoJSONRealty.features.push(feature);
                         }
@@ -314,6 +314,6 @@ module.exports.GeoJSON = function (xmlData, reproject) {
         geoJSONZones: geoJSONZones,
         geoJSONParcels: geoJSONParcels,
         geoJSONRealty: geoJSONRealty
-                //geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
+        //geoJSONRealtyGeometryCollection: geoJSONRealtyCollection
     };
 };
