@@ -123,7 +123,10 @@
             L.DomUtil.addClass(data._exportCont, 'hidden');
             var reader = new FileReader(),
                     file = el.files[0];
-
+            
+            reader.onerror = function (e) {
+                console.log(e.message);
+            }
             reader.onload = function () {
                 data._fileProgress.innerHTML = 'загружено: <b>' + file.size + '</b> байт';
 
@@ -139,12 +142,12 @@
                 data._groups = {};
                 data.parseFile(reader);
             };
-//            reader.onprogress = function (data) {
-//                if (data.lengthComputable) {
-//                    var cnt = data.loaded / data.total;
-//                    data._fileProgress.innerHTML = 'загружено: <b>' + data.loaded + '</b> байт' + (cnt === 1 ? '' : '(' + parseInt(cnt * 100, 10) + '%)');
-//                }
-//            };
+            reader.onprogress = function (info) {
+                if (data.lengthComputable) {
+                    var cnt = info.loaded / info.total;
+                    data._fileProgress.innerHTML = 'загружено: <b>' + info.loaded + '</b> байт' + (cnt === 1 ? '' : '(' + parseInt(cnt * 100, 10) + '%)');
+                }
+            };
             if (el.files.length) {
                 reader.readAsText(file);
             }
